@@ -8,7 +8,120 @@ const APP_STATE = {
         { id: 2, event: "Orientation 2024", date: "May 15, 2024", time: "09:00 AM", status: "PRESENT", synced: true }
     ]
 };
+// --- MOCK AUTHENTICATION (LocalStorage) ---
 
+// Load users from localStorage, or create a default one if empty
+function getUsers() {
+    let users = JSON.parse(localStorage.getItem('mock_users') || '[]');
+    if (users.length === 0) {
+        // Default student so you can demo immediately
+        users.push({
+            id: "2024-00123",
+            name: "Juan Dela Cruz",
+            email: "juan@school.com",
+            password: "password"
+        });
+        localStorage.setItem('mock_users', JSON.stringify(users));
+    }
+    return users;
+}
+
+// --- SIGN UP HANDLER ---
+function handleSignup(e) {
+    e.preventDefault();
+    
+    const id = document.getElementById('signup-id').value.trim();
+    const name = document.getElementById('signup-name').value.trim();
+    const email = document.getElementById('signup-email').value.trim();
+    const password = document.getElementById('signup-pass').value.trim();
+    const confirm = document.getElementById('signup-confirm').value.trim();
+
+    // Validate all fields are filled
+    if (!id || !name || !email || !password || !confirm) {
+        showToast('Please fill in all fields');
+        return;
+    }
+
+    // Check if passwords match
+    if (password !== confirm) {
+        showToast('Passwords do not match!');
+        document.getElementById('signup-pass').style.borderColor = '#ef4444';
+        document.getElementById('signup-confirm').style.borderColor = '#ef4444';
+        return;
+    }
+
+    // Reset border colors if they were highlighted
+    document.getElementById('signup-pass').style.borderColor = '';
+    document.getElementById('signup-confirm').style.borderColor = '';
+
+    let users = getUsers();
+    // Check if Student ID already exists
+    if (users.find(u => u.id === id)) {
+        showToast('Student ID already registered!');
+        return;
+    }
+
+    // Add new user
+    users.push({ id, name, email, password });
+    localStorage.setItem('mock_users', JSON.stringify(users));
+    
+    showToast('Account created successfully! Please log in.');
+    switchView('view-login');
+    
+    // Clear the form
+    document.getElementById('form-signup').reset();
+}
+
+// --- STUDENT LOGIN HANDLER ---
+function handleStudentLogin(e) {
+    e.preventDefault();
+
+    const id = document.getElementById('login-id').value.trim();
+    const password = document.getElementById('login-pass').value.trim();
+
+    if (!id || !password) {
+        showToast('Please enter your Student ID and Password');
+        return;
+    }
+
+    const users = getUsers();
+    const user = users.find(u => u.id === id && u.password === password);
+
+    if (!user) {
+        showToast('Invalid Student ID or Password');
+        return;
+    }
+
+    // Update global state
+    APP_STATE.user = { name: user.name, id: user.id };
+
+    // Update the Dashboard UI
+    document.getElementById('student-display-name').innerText = user.name;
+    document.getElementById('student-display-id').innerText = user.id;
+
+    // Regenerate the QR code with the logged-in student's ID
+    generateStudentQR();
+
+    // Navigate to dashboard
+    switchView('view-student-dash');
+    showToast(`Welcome, ${user.name}!`);
+}
+
+// --- ADMIN LOGIN HANDLER ---
+function handleAdminLogin(e) {
+    e.preventDefault();
+    
+    // Simple hardcoded admin check for demo
+    const email = document.querySelector('#view-admin-login input[type="text"]').value.trim();
+    const password = document.querySelector('#view-admin-login input[type="password"]').value.trim();
+
+    if (email === 'admin@school.com' && password === 'password') {
+        switchView('view-admin-dash');
+        showToast('Admin logged in!');
+    } else {
+        showToast('Invalid admin credentials');
+    }
+}
 let html5QrCodeScanner = null;
 
 // Initialize System on DOM Load

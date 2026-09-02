@@ -47,7 +47,43 @@
                     </div>
                 </div>
             </section>
-
+            <section id="view-signup" class="view">
+    <div class="auth-card card">
+        <div class="logo-container">
+            <i class="fa-solid fa-graduation-cap logo-icon"></i>
+        </div>
+        <h2>CREATE ACCOUNT</h2>
+        <form id="form-signup" onsubmit="handleSignup(event)">
+            <div class="input-group">
+                <i class="fa-solid fa-id-card input-icon"></i>
+                <input type="text" id="signup-id" placeholder="STUDENT ID" required>
+            </div>
+            <div class="input-group">
+                <i class="fa-solid fa-user input-icon"></i>
+                <input type="text" id="signup-name" placeholder="FULL NAME" required>
+            </div>
+            <div class="input-group">
+                <i class="fa-solid fa-envelope input-icon"></i>
+                <input type="email" id="signup-email" placeholder="EMAIL" required>
+            </div>
+            <div class="input-group">
+                <i class="fa-solid fa-lock input-icon"></i>
+                <input type="password" id="signup-pass" placeholder="PASSWORD" required>
+                <i class="fa-solid fa-eye toggle-pass" onclick="togglePassword('signup-pass', this)"></i>
+            </div>
+            <!-- ✅ NEW: Confirm Password Field -->
+            <div class="input-group">
+                <i class="fa-solid fa-lock input-icon"></i>
+                <input type="password" id="signup-confirm" placeholder="CONFIRM PASSWORD" required>
+                <i class="fa-solid fa-eye toggle-pass" onclick="togglePassword('signup-confirm', this)"></i>
+            </div>
+            <button type="submit" class="btn btn-primary">CREATE ACC</button>
+        </form>
+        <div class="auth-links">
+            <p>Already have an account? <a href="#" onclick="switchView('view-login')">LOG IN</a></p>
+        </div>
+    </div>
+</section>
             <section id="view-student-dash" class="view">
     <div class="user-header card">
         <div>
@@ -299,8 +335,6 @@
         </div>
         <!-- ====== END MODAL ====== -->
 
-        <nav class="bottom-nav">
-        <!-- ... rest of your nav ... -->
         <nav class="bottom-nav">
             <button class="nav-item active" onclick="switchView('view-student-dash'); setActiveNav(this)">
         <i class="fa-solid fa-house"></i>
