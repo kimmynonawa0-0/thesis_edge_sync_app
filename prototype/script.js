@@ -17,6 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
     renderRecords();
     renderAdminRecent();
     checkCameraAccess();
+    generateStudentQR();   
 });
 
 // View Navigation Switcher
@@ -104,7 +105,46 @@ function recordAttendance(eventName, location) {
     switchView("view-success");
     showToast("Saved locally (Offline Mode)");
 }
+// --- Student QR Generation ---
+function generateStudentQR() {
+    const studentId = APP_STATE.user.id;
+    const img = document.getElementById('student-qr-img');
+    const enlargedImg = document.getElementById('enlarged-qr-img');
+    const label = document.getElementById('enlarged-qr-label');
+    
+    if (img) {
+        img.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(studentId)}`;
+    }
+    if (enlargedImg) {
+        enlargedImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${encodeURIComponent(studentId)}`;
+    }
+    if (label) {
+        label.innerText = `Student ID: ${studentId}`;
+    }
+}
 
+// --- Enlarge QR Modal ---
+function enlargeQR() {
+    const modal = document.getElementById('qr-enlarged-modal');
+    if (!modal) {
+        alert('Modal element not found! Did you add the HTML for #qr-enlarged-modal?');
+        return;
+    }
+    // Refresh the enlarged image (in case student ID changed)
+    const studentId = APP_STATE.user.id;
+    const img = document.getElementById('enlarged-qr-img');
+    if (img) {
+        img.src = `https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${encodeURIComponent(studentId)}`;
+    }
+    modal.classList.remove('hidden');
+}
+
+function closeEnlargedQR() {
+    const modal = document.getElementById('qr-enlarged-modal');
+    if (modal) {
+        modal.classList.add('hidden');
+    }
+}
 // Dynamic Rendering
 function renderRecords() {
     const list = document.getElementById("records-list");

@@ -48,75 +48,58 @@
                 </div>
             </section>
 
-            <section id="view-signup" class="view">
-                <div class="auth-card card">
-                    <div class="logo-container">
-                        <i class="fa-solid fa-graduation-cap logo-icon"></i>
-                    </div>
-                    <h2>CREATE ACCOUNT</h2>
-                    <form onsubmit="event.preventDefault(); switchView('view-login'); showToast('Account created successfully!');">
-                        <div class="input-group">
-                            <i class="fa-solid fa-id-card input-icon"></i>
-                            <input type="text" placeholder="STUDENT ID" required>
-                        </div>
-                        <div class="input-group">
-                            <i class="fa-solid fa-envelope input-icon"></i>
-                            <input type="email" placeholder="EMAIL" required>
-                        </div>
-                        <div class="input-group">
-                            <i class="fa-solid fa-lock input-icon"></i>
-                            <input type="password" placeholder="PASSWORD" required>
-                        </div>
-                        <button type="submit" class="btn btn-primary">CREATE ACC</button>
-                    </form>
-                    <div class="auth-links">
-                        <p>Already have an account? <a href="#" onclick="switchView('view-login')">LOG IN</a></p>
-                    </div>
-                </div>
-            </section>
-
             <section id="view-student-dash" class="view">
-                <div class="user-header card">
-                    <div>
-                        <span class="subtext">Welcome, Student</span>
-                        <h3 id="student-display-name">Juan Dela Cruz</h3>
-                    </div>
-                    <button class="icon-btn"><i class="fa-regular fa-bell"></i></button>
-                </div>
+    <div class="user-header card">
+        <div>
+            <span class="subtext">Welcome, Student</span>
+            <h3 id="student-display-name">Juan Dela Cruz</h3>
+            <p class="subtext" style="font-size:0.8rem;">ID: <span id="student-display-id">2024-00123</span></p>
+        </div>
+        <button class="icon-btn"><i class="fa-regular fa-bell"></i></button>
+    </div>
 
-                <div class="card metrics-card">
-                    <h4>ATTENDANCE SUMMARY</h4>
-                    <div class="metrics-grid">
-                        <div class="metric">
-                            <span class="metric-val" id="total-events">12</span>
-                            <span class="metric-lbl">Total Events</span>
-                        </div>
-                        <div class="metric highlight-green">
-                            <span class="metric-val" id="present-count">10</span>
-                            <span class="metric-lbl">Present</span>
-                        </div>
-                        <div class="metric highlight-red">
-                            <span class="metric-val">2</span>
-                            <span class="metric-lbl">Absent</span>
-                        </div>
-                        <div class="metric">
-                            <span class="metric-val">83%</span>
-                            <span class="metric-lbl">Rate</span>
-                        </div>
-                    </div>
-                </div>
+    <div class="card metrics-card">
+        <h4>ATTENDANCE SUMMARY</h4>
+        <div class="metrics-grid">
+            <div class="metric">
+                <span class="metric-val" id="total-events">12</span>
+                <span class="metric-lbl">Total Events</span>
+            </div>
+            <div class="metric highlight-green">
+                <span class="metric-val" id="present-count">10</span>
+                <span class="metric-lbl">Present</span>
+            </div>
+            <div class="metric highlight-red">
+                <span class="metric-val">2</span>
+                <span class="metric-lbl">Absent</span>
+            </div>
+            <div class="metric">
+                <span class="metric-val">83%</span>
+                <span class="metric-lbl">Rate</span>
+            </div>
+        </div>
+    </div>
 
-                <div class="card active-session-card">
-                    <div class="badge-tag">ACTIVE EVENT</div>
-                    <h3 id="dash-event-name">General Assembly 2024</h3>
-                    <p><i class="fa-solid fa-location-dot"></i> <span id="dash-event-loc">Main Hall</span></p>
-                    <p><i class="fa-regular fa-clock"></i> <span id="dash-event-time">Today • 10:00 AM</span></p>
+    <!-- STUDENT QR CODE CARD (Replaces the old Active Event + Scan button) -->
+    <div class="card student-qr-card text-center">
+        <h4>YOUR ATTENDANCE QR</h4>
+        <div id="student-qr-code" style="margin: 10px auto; width: 150px; height: 150px;">
+            <img id="student-qr-img" src="images/rick_final.png" alt="Student QR Code" style="width:100%; height:100%;">
+        </div>
+        <p class="subtext" style="margin-top: 8px;">Show this to the admin to mark your attendance</p>
+        <button class="btn btn-primary" onclick="enlargeQR()" style="margin-top: 10px;">
+            <i class="fa-solid fa-expand"></i> ENLARGE QR
+        </button>
+    </div>
 
-                    <button class="btn btn-primary scanner-trigger" onclick="switchView('view-scanner'); startQRScanner();">
-            <i class="fa-solid fa-qrcode"></i> SCAN QR CODE
-          </button>
-                </div>
-            </section>
+    <!-- Active Event Info (Read-only for student) -->
+    <div class="card active-session-card">
+        <div class="badge-tag">CURRENT EVENT</div>
+        <h3 id="dash-event-name">General Assembly 2024</h3>
+        <p><i class="fa-solid fa-location-dot"></i> <span id="dash-event-loc">Main Hall</span></p>
+        <p><i class="fa-regular fa-clock"></i> <span id="dash-event-time">Today • 10:00 AM</span></p>
+    </div>
+</section>
 
             <section id="view-scanner" class="view dark-view">
                 <div class="scanner-header">
@@ -221,40 +204,49 @@
             </section>
 
             <section id="view-admin-dash" class="view">
-                <div class="user-header card admin-theme">
-                    <div>
-                        <span class="subtext">Admin Control</span>
-                        <h3>WELCOME ADMIN</h3>
-                    </div>
-                    <button class="btn btn-small btn-purple" onclick="switchView('view-admin-create-event')">+ Create Event</button>
-                </div>
+    <div class="user-header card admin-theme">
+        <div>
+            <span class="subtext">Admin Control</span>
+            <h3>WELCOME ADMIN</h3>
+        </div>
+        <button class="btn btn-small btn-purple" onclick="switchView('view-admin-create-event')">+ Create Event</button>
+    </div>
 
-                <div class="card metrics-card">
-                    <h4>TODAY'S ATTENDANCE</h4>
-                    <div class="metrics-grid">
-                        <div class="metric highlight-green">
-                            <span class="metric-val" id="admin-total-val">50</span>
-                            <span class="metric-lbl">TOTAL</span>
-                        </div>
-                        <div class="metric highlight-green">
-                            <span class="metric-val" id="admin-present-val">42</span>
-                            <span class="metric-lbl">PRESENT</span>
-                        </div>
-                    </div>
-                </div>
+    <div class="card metrics-card">
+        <h4>TODAY'S ATTENDANCE</h4>
+        <div class="metrics-grid">
+            <div class="metric highlight-green">
+                <span class="metric-val" id="admin-total-val">50</span>
+                <span class="metric-lbl">TOTAL</span>
+            </div>
+            <div class="metric highlight-green">
+                <span class="metric-val" id="admin-present-val">42</span>
+                <span class="metric-lbl">PRESENT</span>
+            </div>
+        </div>
+    </div>
 
-                <div class="card text-center">
-                    <div id="sync-status-indicator">
-                        <p id="sync-msg" class="subtext" style="margin-bottom: 10px;">Pending Local Records: <span id="pending-count">0</span></p>
-                    </div>
-                    <button class="btn btn-action" onclick="syncData()"><i class="fa-solid fa-rotate"></i> SYNC NOW</button>
-                </div>
+    <!-- Admin Scanner Trigger -->
+    <div class="card text-center" style="border: 2px dashed var(--purple);">
+        <h4><i class="fa-solid fa-qrcode"></i> SCAN STUDENT QR</h4>
+        <p class="subtext">Scan the student's QR code to mark them present</p>
+        <button class="btn btn-purple scanner-trigger" onclick="switchView('view-scanner'); startQRScanner();">
+            <i class="fa-solid fa-camera"></i> OPEN SCANNER
+        </button>
+    </div>
 
-                <div class="card">
-                    <h4>RECENT ATTENDANCE</h4>
-                    <div id="admin-recent-list"></div>
-                </div>
-            </section>
+    <div class="card text-center">
+        <div id="sync-status-indicator">
+            <p id="sync-msg" class="subtext" style="margin-bottom: 10px;">Pending Local Records: <span id="pending-count">0</span></p>
+        </div>
+        <button class="btn btn-action" onclick="syncData()"><i class="fa-solid fa-rotate"></i> SYNC NOW</button>
+    </div>
+
+    <div class="card">
+        <h4>RECENT ATTENDANCE</h4>
+        <div id="admin-recent-list"></div>
+    </div>
+</section>
 
             <section id="view-admin-create-event" class="view">
                 <div class="card">
@@ -287,8 +279,28 @@
             </section>
 
         </div>
+        <!-- Enlarged QR Modal -->
+        <div id="qr-enlarged-modal" class="modal-overlay hidden" onclick="closeEnlargedQR()">
+            <div class="modal-content" onclick="event.stopPropagation();">
+                <img id="enlarged-qr-img" src="" alt="Enlarged QR" style="width:100%; max-width:280px; height:auto;">
+                <p style="font-weight:bold; margin-top:12px;" id="enlarged-qr-label">Student ID: 2024-00123</p>
+                <button class="btn btn-secondary" onclick="closeEnlargedQR()" style="margin-top:16px;">Close</button>
+            </div>
+        </div>
         <div id="toast" class="toast hidden">Notification message</div>
 
+                <!-- ====== ENLARGED QR MODAL ====== -->
+        <div id="qr-enlarged-modal" class="modal-overlay hidden" onclick="closeEnlargedQR()">
+            <div class="modal-content" onclick="event.stopPropagation();">
+                <img id="enlarged-qr-img" src="" alt="Enlarged QR" style="width:100%; max-width:280px; height:auto;">
+                <p style="font-weight:bold; margin-top:12px;" id="enlarged-qr-label">Student ID: 2024-00123</p>
+                <button class="btn btn-secondary" onclick="closeEnlargedQR()" style="margin-top:16px;">Close</button>
+            </div>
+        </div>
+        <!-- ====== END MODAL ====== -->
+
+        <nav class="bottom-nav">
+        <!-- ... rest of your nav ... -->
         <nav class="bottom-nav">
             <button class="nav-item active" onclick="switchView('view-student-dash'); setActiveNav(this)">
         <i class="fa-solid fa-house"></i>
