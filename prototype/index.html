@@ -139,9 +139,14 @@
 
             <section id="view-scanner" class="view dark-view">
                 <div class="scanner-header">
-                    <button class="back-btn" onclick="stopQRScanner(); switchView('view-student-dash');">
-            <i class="fa-solid fa-arrow-left"></i>
-          </button>
+                    <button class="back-btn" onclick="stopQRScanner(); 
+    if (window._currentEventName) { 
+        switchView('view-event-detail'); 
+    } else { 
+        switchView('view-student-dash'); 
+    }">
+    <i class="fa-solid fa-arrow-left"></i>
+</button>
                     <h3>Scan Event QR Code</h3>
                 </div>
 
@@ -201,8 +206,7 @@
                         </div>
                     </div>
 
-                    <button class="btn btn-primary" onclick="switchView('view-student-dash')">DONE</button>
-                </div>
+<button class="btn btn-primary" id="success-done-btn" onclick="switchView('view-student-dash')">DONE</button>                </div>
             </section>
 
             <section id="view-records" class="view">
@@ -262,13 +266,12 @@
         </div>
     </div>
 
-    <!-- Admin Scanner Trigger -->
-    <div class="card text-center" style="border: 2px dashed var(--purple);">
-        <h4><i class="fa-solid fa-qrcode"></i> SCAN STUDENT QR</h4>
-        <p class="subtext">Scan the student's QR code to mark them present</p>
-        <button class="btn btn-purple scanner-trigger" onclick="switchView('view-scanner'); startQRScanner();">
-            <i class="fa-solid fa-camera"></i> OPEN SCANNER
-        </button>
+    <!-- ✅ EVENTS LIST (Replaces old scanner card) -->
+    <div class="card">
+        <h4>MANAGE EVENTS</h4>
+        <div id="admin-events-list">
+            <!-- Events will be rendered here -->
+        </div>
     </div>
 
     <div class="card text-center">
@@ -285,35 +288,61 @@
 </section>
 
             <section id="view-admin-create-event" class="view">
-                <div class="card">
-                    <h3>ADD EVENTS</h3>
-                    <form id="create-event-form" onsubmit="handleCreateEvent(event)">
-                        <div class="input-group">
-                            <input type="text" id="ev-name" placeholder="Event Name" required>
-                        </div>
-                        <div class="input-group">
-                            <input type="text" id="ev-loc" placeholder="Location" required>
-                        </div>
-                        <div class="input-group">
-                            <input type="date" id="ev-date" required>
-                        </div>
-                        <div class="input-group">
-                            <input type="time" id="ev-time" required>
-                        </div>
-                        <div class="btn-row">
-                            <button type="button" class="btn btn-secondary" onclick="switchView('view-admin-dash')">CANCEL</button>
-                            <button type="submit" class="btn btn-primary">CREATE EVENT</button>
-                        </div>
-                    </form>
-                </div>
-
-                <div id="generated-qr-card" class="card text-center hidden">
-                    <h4>EVENT QR CODE</h4>
-                    <div id="qr-output" style="margin: 10px 0;"></div>
-                    <p id="qr-event-label" class="subtext"></p>
-                </div>
-            </section>
-
+    <div class="card">
+        <h3>ADD EVENTS</h3>
+        <form id="create-event-form" onsubmit="handleCreateEvent(event)">
+            <div class="input-group">
+                <input type="text" id="ev-name" placeholder="Event Name" required>
+            </div>
+            <div class="input-group">
+                <input type="text" id="ev-loc" placeholder="Location" required>
+            </div>
+            <div class="input-group">
+                <input type="date" id="ev-date" required>   
+            </div>
+            <div class="input-group">
+                <input type="time" id="ev-time" required>
+            </div>
+            <div class="btn-row">
+                <button type="button" class="btn btn-secondary" onclick="switchView('view-admin-dash')">CANCEL</button>
+                <button type="submit" class="btn btn-primary">CREATE EVENT</button>
+            </div>
+        </form>
+    </div>
+</section>
+            <!-- EVENT DETAIL / MANAGE EVENT (Admin scans here) -->
+<section id="view-event-detail" class="view">
+    <div class="card admin-theme" style="border-top: 4px solid var(--purple);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <button class="back-btn" onclick="switchView('view-admin-dash')" style="color: var(--text);">
+                <i class="fa-solid fa-arrow-left"></i> Back
+            </button>
+            <span class="badge-tag" style="position: static; background: var(--purple); color: white;">ACTIVE</span>
+        </div>
+        
+        <h3 id="event-detail-name">Event Name</h3>
+        <p><i class="fa-solid fa-location-dot"></i> <span id="event-detail-loc">Location</span></p>
+        <p><i class="fa-regular fa-clock"></i> <span id="event-detail-time">Date & Time</span></p>
+        
+        <hr style="margin: 16px 0; border-color: #e2e8f0;">
+        
+        <!-- SCAN STUDENT QR - ONLY FOR THIS EVENT -->
+        <div class="card text-center" style="border: 2px dashed var(--purple); background: #faf5ff;">
+            <h4><i class="fa-solid fa-qrcode"></i> SCAN STUDENT QR</h4>
+            <p class="subtext">Scan the student's QR code to mark them present for this event</p>
+            <button class="btn btn-purple" onclick="startEventScanner()">
+                <i class="fa-solid fa-camera"></i> SCAN FOR THIS EVENT
+            </button>
+        </div>
+        
+        <div style="margin-top: 16px;">
+            <h4>ATTENDEES (<span id="event-attendee-count">0</span>)</h4>
+            <div id="event-attendee-list" style="max-height: 200px; overflow-y: auto;">
+                <p class="subtext" style="text-align: center; padding: 20px 0;">No students checked in yet</p>
+            </div>
+        </div>
+    </div>
+</section>
         </div>
         <!-- Enlarged QR Modal -->
         <div id="qr-enlarged-modal" class="modal-overlay hidden" onclick="closeEnlargedQR()">
@@ -335,23 +364,8 @@
         </div>
         <!-- ====== END MODAL ====== -->
 
-        <nav class="bottom-nav">
-            <button class="nav-item active" onclick="switchView('view-student-dash'); setActiveNav(this)">
-        <i class="fa-solid fa-house"></i>
-        <span>Home</span>
-      </button>
-            <button class="nav-item" onclick="switchView('view-scanner'); startQRScanner(); setActiveNav(this)">
-        <i class="fa-solid fa-qrcode"></i>
-        <span>Scan</span>
-      </button>
-            <button class="nav-item" onclick="switchView('view-records'); setActiveNav(this)">
-        <i class="fa-solid fa-clipboard-list"></i>
-        <span>Records</span>
-      </button>
-            <button class="nav-item" onclick="switchView('view-admin-dash'); setActiveNav(this)">
-        <i class="fa-solid fa-user-gear"></i>
-        <span>Admin</span>
-      </button>
+        <nav class="bottom-nav" id="bottom-nav">
+            <!-- Dynamically generated by JavaScript -->
         </nav>
 
     </main>
