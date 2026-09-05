@@ -682,3 +682,18 @@ h4 {
         padding-top: 16px;
     }
 }
+/* ===== CONFIRMATION MODAL ===== */
+.confirm-modal {
+    max-width: 300px;
+}
+.confirm-modal p {
+    color: var(--text);
+    text-align: center;
+}
+.confirm-modal .btn {
+    min-width: 80px;
+}
+/* ===== BOTTOM NAV - Hidden by default ===== */
+.bottom-nav {
+    display: none;   /* only shown when logged in */
+}

@@ -390,7 +390,16 @@
 
         <!-- ===== BOTTOM NAV ===== -->
         <nav class="bottom-nav" id="bottom-nav"></nav>
-
+<!-- ===== CONFIRMATION MODAL (for logout, etc.) ===== -->
+<div id="confirm-modal" class="modal-overlay hidden">
+    <div class="modal-content confirm-modal">
+        <p id="confirm-message" style="font-size:1.1rem; font-weight:600; margin-bottom:20px;">Are you sure?</p>
+        <div style="display:flex; gap:12px; justify-content:center;">
+            <button class="btn btn-secondary" style="flex:1;" id="confirm-cancel-btn">Cancel</button>
+            <button class="btn btn-primary" style="flex:1;" id="confirm-ok-btn">Yes</button>
+        </div>
+    </div>
+</div>
     </div><!-- /app-container -->
 
     <!-- External JavaScript -->
