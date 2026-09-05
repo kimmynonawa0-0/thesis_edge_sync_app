@@ -1,21 +1,13 @@
+/* ===== ROOT VARIABLES ===== */
 :root {
-    /* Green Theme Variables */
     --primary: #15803d;
-    /* Forest Green */
     --primary-dark: #166534;
-    /* Dark Green */
     --primary-light: #dcfce7;
-    /* Light Green Accent */
     --secondary: #16a34a;
-    /* Vibrant Green */
     --purple: #7c3aed;
-    /* Admin Accent */
     --success: #22c55e;
-    /* Success Green */
     --danger: #ef4444;
-    /* Red for Absent */
     --background: #f0fdf4;
-    /* Soft Mint Background */
     --card-bg: #ffffff;
     --text: #0f172a;
     --text-muted: #64748b;
@@ -23,58 +15,43 @@
     --shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
 }
 
+/* ===== RESET & BASE ===== */
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
-
-
-/* Perfect Center Layout for Viewport */
-
 html,
 body {
     width: 100%;
     height: 100%;
     overflow: hidden;
 }
-
 body {
     background-color: #091e11;
-    /* Studio Dark Background */
     color: var(--text);
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-
-/* ==========================================
-     CENTERED ENLARGED PHONE FRAME (430px x 880px)
-     ========================================== */
-
+/* ===== PHONE FRAME ===== */
 .app-container {
     position: relative;
     width: 430px;
     height: 880px;
     max-height: 95vh;
-    /* Ensures it fits on smaller laptop displays */
     background-color: var(--background);
     border-radius: 56px;
     border: 14px solid #1c2b21;
-    /* Outer Phone Chassis */
     outline: 4px solid #2d4334;
     box-shadow: 0 30px 70px rgba(0, 0, 0, 0.85), 0 0 50px rgba(21, 128, 61, 0.25);
     overflow: hidden;
-    /* Keeps ALL elements inside the phone boundary */
     display: flex;
     flex-direction: column;
 }
-
-
-/* Dynamic Island / Top Camera Notch (Inside Phone) */
-
+/* Dynamic Island */
 .app-container::before {
     content: '';
     position: absolute;
@@ -83,15 +60,12 @@ body {
     transform: translateX(-50%);
     width: 130px;
     height: 30px;
-    background-color: #000000;
+    background-color: #000;
     border-radius: 20px;
     z-index: 9999;
     pointer-events: none;
 }
-
-
-/* iPhone Bottom Home Bar Line (Inside Phone) */
-
+/* Home Bar */
 .app-container::after {
     content: '';
     position: absolute;
@@ -100,35 +74,31 @@ body {
     transform: translateX(-50%);
     width: 140px;
     height: 5px;
-    background-color: #000000;
+    background-color: #000;
     border-radius: 10px;
     z-index: 9999;
     opacity: 0.35;
     pointer-events: none;
 }
 
-
-/* Top Status Bar (Inside Phone) */
-
+/* ===== TOP STATUS BAR ===== */
 .top-status-bar {
     width: 100%;
     background: var(--card-bg);
     padding: 50px 22px 14px 22px;
-    /* Clears top notch */
     display: flex;
     justify-content: space-between;
     align-items: center;
     border-bottom: 1px solid #e2e8f0;
     z-index: 10;
+    flex-shrink: 0;
 }
-
 .system-title {
     font-weight: 800;
     color: var(--primary);
     font-size: 1.05rem;
     letter-spacing: 0.5px;
 }
-
 .status-badge {
     font-size: 0.8rem;
     padding: 5px 12px;
@@ -138,49 +108,38 @@ body {
     align-items: center;
     gap: 6px;
 }
-
 .status-badge.offline {
     background-color: #fef2f2;
     color: var(--danger);
 }
-
 .status-badge.synced {
     background-color: #f0fdf4;
     color: var(--success);
 }
 
-
-/* Scrollable Main Content Area */
-
+/* ===== SCROLL AREA ===== */
 .view-scroll-area {
     flex: 1;
     overflow-y: auto;
     padding: 20px;
     padding-bottom: 95px;
-    /* Keeps content clear of bottom navbar */
 }
-
-
-/* Clean Custom Scrollbar inside Phone */
-
 .view-scroll-area::-webkit-scrollbar {
     width: 4px;
 }
-
 .view-scroll-area::-webkit-scrollbar-thumb {
     background: rgba(21, 128, 61, 0.2);
     border-radius: 4px;
 }
 
+/* ===== VIEWS ===== */
 .view {
     display: none;
     animation: fadeIn 0.25s ease-in-out;
 }
-
 .view.active {
     display: block;
 }
-
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -192,9 +151,7 @@ body {
     }
 }
 
-
-/* Cards & Components */
-
+/* ===== CARDS ===== */
 .card {
     background: var(--card-bg);
     border-radius: var(--border-radius);
@@ -203,7 +160,6 @@ body {
     box-shadow: var(--shadow);
     border: 1px solid rgba(220, 252, 231, 0.8);
 }
-
 h2 {
     font-size: 1.45rem;
     margin-bottom: 18px;
@@ -211,13 +167,11 @@ h2 {
     text-align: center;
     font-weight: 800;
 }
-
 h3 {
     font-size: 1.2rem;
     margin-bottom: 10px;
     color: var(--text);
 }
-
 h4 {
     font-size: 0.9rem;
     color: var(--text-muted);
@@ -225,19 +179,15 @@ h4 {
     letter-spacing: 0.5px;
     margin-bottom: 14px;
 }
-
 .subtext {
     font-size: 0.9rem;
     color: var(--text-muted);
 }
-
 .text-center {
     text-align: center;
 }
 
-
-/* Logo Frame (For University Logo) */
-
+/* ===== LOGO ===== */
 .logo-container {
     width: 85px;
     height: 85px;
@@ -250,26 +200,20 @@ h4 {
     margin: 0 auto 18px auto;
     overflow: hidden;
 }
-
-.uni-logo-img {
-    width: 80%;
-    height: 80%;
-    object-fit: contain;
-}
-
 .logo-icon {
     font-size: 2.5rem;
     color: var(--primary);
 }
+.admin-accent {
+    background: #f3e8ff;
+    color: var(--purple);
+}
 
-
-/* Inputs */
-
+/* ===== INPUTS ===== */
 .input-group {
     position: relative;
     margin-bottom: 16px;
 }
-
 .input-group input {
     width: 100%;
     padding: 16px 18px 16px 46px;
@@ -279,13 +223,11 @@ h4 {
     outline: none;
     background-color: #f8fafc;
 }
-
 .input-group input:focus {
     border-color: var(--primary);
     background-color: #fff;
     box-shadow: 0 0 0 3px rgba(21, 128, 61, 0.15);
 }
-
 .input-icon {
     position: absolute;
     left: 16px;
@@ -294,7 +236,6 @@ h4 {
     color: var(--text-muted);
     font-size: 1.05rem;
 }
-
 .toggle-pass {
     position: absolute;
     right: 16px;
@@ -305,9 +246,7 @@ h4 {
     font-size: 1.05rem;
 }
 
-
-/* Buttons */
-
+/* ===== BUTTONS ===== */
 .btn {
     width: 100%;
     padding: 16px;
@@ -318,72 +257,64 @@ h4 {
     cursor: pointer;
     transition: background-color 0.2s, transform 0.1s;
 }
-
 .btn:active {
     transform: scale(0.98);
 }
-
 .btn-primary {
     background-color: var(--primary);
     color: #fff;
 }
-
 .btn-primary:hover {
     background-color: var(--primary-dark);
 }
-
 .btn-secondary {
     background-color: #e2e8f0;
     color: var(--text);
 }
-
 .btn-action {
     background-color: var(--secondary);
     color: #fff;
 }
-
 .btn-purple {
     background-color: var(--purple);
     color: #fff;
 }
-
 .btn-small {
     padding: 10px 14px;
     font-size: 0.85rem;
     width: auto;
 }
-
 .btn-row {
     display: flex;
     gap: 12px;
     margin-top: 12px;
 }
 
+/* ===== AUTH ===== */
 .auth-card {
     text-align: center;
     margin-top: 10px;
 }
-
 .auth-links {
     margin-top: 18px;
     font-size: 0.9rem;
 }
-
 .auth-links a {
     color: var(--primary);
     text-decoration: none;
     font-weight: 700;
+    cursor: pointer;
+}
+.auth-links a:hover {
+    text-decoration: underline;
 }
 
-
-/* Dashboard Summaries */
-
+/* ===== DASHBOARD ===== */
 .user-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
-
 .icon-btn {
     background: var(--primary-light);
     color: var(--primary);
@@ -394,13 +325,11 @@ h4 {
     cursor: pointer;
     font-size: 1.1rem;
 }
-
 .metrics-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 14px;
 }
-
 .metric {
     background: #f8fafc;
     padding: 14px;
@@ -409,32 +338,26 @@ h4 {
     flex-direction: column;
     align-items: center;
 }
-
 .metric-val {
     font-size: 1.55rem;
     font-weight: 800;
     color: var(--text);
 }
-
 .metric-lbl {
     font-size: 0.8rem;
     color: var(--text-muted);
     margin-top: 2px;
 }
-
 .highlight-green .metric-val {
     color: var(--primary);
 }
-
 .highlight-red .metric-val {
     color: var(--danger);
 }
-
 .active-session-card {
     position: relative;
     border-left: 5px solid var(--primary);
 }
-
 .badge-tag {
     position: absolute;
     top: 18px;
@@ -446,24 +369,34 @@ h4 {
     padding: 5px 10px;
     border-radius: 6px;
 }
+.admin-theme {
+    border-top: 4px solid var(--purple);
+}
 
+/* ===== STUDENT QR ===== */
+.student-qr-card {
+    background: #ffffff;
+    border: 2px solid var(--primary-light);
+}
+#student-qr-img {
+    border-radius: 12px;
+    background: #f8fafc;
+    padding: 8px;
+}
 
-/* Scanner Screen (Inside Phone) */
-
+/* ===== SCANNER ===== */
 .dark-view {
     background: #05140a;
     color: #fff;
     border-radius: var(--border-radius);
     padding: 18px;
 }
-
 .scanner-header {
     display: flex;
     align-items: center;
     gap: 16px;
     margin-bottom: 22px;
 }
-
 .back-btn {
     background: none;
     border: none;
@@ -471,7 +404,6 @@ h4 {
     font-size: 1.3rem;
     cursor: pointer;
 }
-
 .scanner-viewport {
     position: relative;
     width: 100%;
@@ -483,11 +415,9 @@ h4 {
     align-items: center;
     justify-content: center;
 }
-
 #reader {
     width: 100%;
 }
-
 .scanner-overlay {
     position: absolute;
     top: 0;
@@ -499,48 +429,41 @@ h4 {
     justify-content: center;
     pointer-events: none;
 }
-
 .square-frame {
     width: 170px;
     height: 170px;
     position: relative;
 }
-
 .corner {
     position: absolute;
     width: 22px;
     height: 22px;
     border: 3px solid var(--primary);
 }
-
 .tl {
     top: 0;
     left: 0;
     border-right: none;
     border-bottom: none;
 }
-
 .tr {
     top: 0;
     right: 0;
     border-left: none;
     border-bottom: none;
 }
-
 .bl {
     bottom: 0;
     left: 0;
     border-right: none;
     border-top: none;
 }
-
 .br {
     bottom: 0;
     right: 0;
     border-left: none;
     border-top: none;
 }
-
 .scan-line {
     width: 100%;
     height: 2px;
@@ -550,7 +473,6 @@ h4 {
     top: 0;
     animation: scanMove 2s infinite ease-in-out;
 }
-
 @keyframes scanMove {
     0% {
         top: 0;
@@ -562,14 +484,12 @@ h4 {
         top: 0;
     }
 }
-
 .scan-instruction {
     text-align: center;
     font-size: 0.9rem;
     color: #a7f3d0;
     margin: 18px 0;
 }
-
 .camera-notice {
     background: #14532d;
     padding: 12px;
@@ -579,24 +499,19 @@ h4 {
     color: #f0fdf4;
     margin-bottom: 14px;
 }
-
 .hidden {
     display: none !important;
 }
 
-
-/* Confirmation Screen */
-
+/* ===== CONFIRMATION ===== */
 .confirmation-card {
     text-align: center;
 }
-
 .success-icon-wrap {
     font-size: 4rem;
     color: var(--primary);
     margin-bottom: 10px;
 }
-
 .receipt-details {
     background: #f8fafc;
     padding: 18px;
@@ -604,33 +519,27 @@ h4 {
     margin: 18px 0;
     text-align: left;
 }
-
 .receipt-row {
     display: flex;
     justify-content: space-between;
     font-size: 0.9rem;
     margin-bottom: 10px;
 }
-
 .receipt-row span {
     color: var(--text-muted);
 }
-
 .divider {
     border: 0;
     border-top: 1px dashed #cbd5e1;
     margin: 12px 0;
 }
 
-
-/* Attendance Records */
-
+/* ===== RECORDS ===== */
 .records-container {
     display: flex;
     flex-direction: column;
     gap: 12px;
 }
-
 .record-card {
     background: var(--card-bg);
     padding: 16px;
@@ -640,27 +549,22 @@ h4 {
     align-items: center;
     border: 1px solid #e2e8f0;
 }
-
 .record-status {
     font-size: 0.8rem;
     font-weight: 700;
     padding: 5px 10px;
     border-radius: 8px;
 }
-
 .status-present {
     background: var(--primary-light);
     color: var(--primary-dark);
 }
-
 .status-absent {
     background: #fee2e2;
     color: var(--danger);
 }
 
-
-/* Bottom Nav (Inside Phone) */
-
+/* ===== BOTTOM NAV ===== */
 .bottom-nav {
     position: absolute;
     bottom: 0;
@@ -670,11 +574,10 @@ h4 {
     display: flex;
     justify-content: space-around;
     padding: 12px 0 26px 0;
-    /* Fits bottom home indicator bar */
     border-top: 1px solid #e2e8f0;
     z-index: 100;
+    flex-shrink: 0;
 }
-
 .nav-item {
     background: none;
     border: none;
@@ -687,28 +590,15 @@ h4 {
     cursor: pointer;
     width: 25%;
 }
-
 .nav-item i {
     font-size: 1.25rem;
 }
-
 .nav-item.active {
     color: var(--primary);
     font-weight: 800;
 }
 
-.admin-theme {
-    border-top: 4px solid var(--purple);
-}
-
-.admin-accent {
-    background: #f3e8ff;
-    color: var(--purple);
-}
-
-
-/* Toast Notifications (Inside Phone) */
-
+/* ===== TOAST ===== */
 .toast {
     position: absolute;
     bottom: 85px;
@@ -722,9 +612,12 @@ h4 {
     z-index: 200;
     box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
     white-space: nowrap;
+    max-width: 90%;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-/* Enlarged QR Modal */
+/* ===== MODAL ===== */
 .modal-overlay {
     position: absolute;
     top: 0;
@@ -738,7 +631,6 @@ h4 {
     justify-content: center;
     backdrop-filter: blur(4px);
 }
-
 .modal-content {
     background: var(--card-bg);
     padding: 30px 25px;
@@ -746,23 +638,47 @@ h4 {
     text-align: center;
     width: 85%;
     max-width: 320px;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
     animation: fadeIn 0.2s ease-out;
 }
-
 .modal-content img {
     display: block;
     margin: 0 auto;
 }
 
-/* Student QR Card */
-.student-qr-card {
-    background: #ffffff;
-    border: 2px solid var(--primary-light);
+/* ===== RESPONSIVE ===== */
+@media (max-width: 460px) {
+    .app-container {
+        width: 100%;
+        height: 100vh;
+        max-height: 100vh;
+        border-radius: 0;
+        border: none;
+        outline: none;
+        box-shadow: none;
+    }
+    .app-container::before,
+    .app-container::after {
+        display: none;
+    }
+    .top-status-bar {
+        padding-top: 16px;
+    }
 }
-
-#student-qr-img {
-    border-radius: 12px;
-    background: #f8fafc;
-    padding: 8px;
+@media (max-height: 700px) {
+    .app-container {
+        height: 100vh;
+        max-height: 100vh;
+        border-radius: 0;
+        border: none;
+        outline: none;
+        box-shadow: none;
+    }
+    .app-container::before,
+    .app-container::after {
+        display: none;
+    }
+    .top-status-bar {
+        padding-top: 16px;
+    }
 }

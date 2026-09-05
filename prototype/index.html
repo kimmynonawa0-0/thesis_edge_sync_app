@@ -2,154 +2,167 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Green Mobile QR Attendance System</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NORWE-SCAN · QR Attendance</title>
+    <!-- External CSS -->
+    <link rel="stylesheet" href="style.css" />
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <!-- QR Scanner Library -->
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 </head>
 
 <body>
 
-    <main class="app-container">
+    <div class="app-container">
 
+        <!-- TOP STATUS BAR -->
         <header class="top-status-bar">
             <div class="system-title">NORWE-SCAN</div>
             <div id="network-status" class="status-badge offline">
-                <i class="fa-solid fa-circle-dot"></i> <span id="status-text">Offline</span>
+                <i class="fa-solid fa-circle-dot"></i>
+                <span id="status-text">Offline</span>
             </div>
         </header>
 
+        <!-- SCROLL AREA -->
         <div class="view-scroll-area">
 
+            <!-- ============================================================ -->
+            <!-- VIEW: STUDENT LOGIN -->
+            <!-- ============================================================ -->
             <section id="view-login" class="view active">
                 <div class="auth-card card">
                     <div class="logo-container">
                         <i class="fa-solid fa-graduation-cap logo-icon"></i>
                     </div>
                     <h2>STUDENT LOG IN</h2>
-                    <form id="form-login" onsubmit="event.preventDefault(); switchView('view-student-dash');">
+                    <form id="form-login" onsubmit="handleStudentLogin(event)">
                         <div class="input-group">
                             <i class="fa-solid fa-user input-icon"></i>
-                            <input type="text" placeholder="STUDENT ID" required>
+                            <input type="text" id="login-id" placeholder="STUDENT ID" required />
                         </div>
                         <div class="input-group">
                             <i class="fa-solid fa-lock input-icon"></i>
-                            <input type="password" id="login-pass" placeholder="PASSWORD" required>
+                            <input type="password" id="login-pass" placeholder="PASSWORD" required />
                             <i class="fa-solid fa-eye toggle-pass" onclick="togglePassword('login-pass', this)"></i>
                         </div>
                         <button type="submit" class="btn btn-primary">LOG IN</button>
                     </form>
                     <div class="auth-links">
-                        <p>Don't have an account? <a href="#" onclick="switchView('view-signup')">SIGN UP</a></p>
-                        <p>Are you admin? <a href="#" onclick="switchView('view-admin-login')">ADMIN LOGIN</a></p>
+                        <p>Don't have an account? <a onclick="switchView('view-signup')">SIGN UP</a></p>
+                        <p>Are you admin? <a onclick="switchView('view-admin-login')">ADMIN LOGIN</a></p>
                     </div>
                 </div>
             </section>
+
+            <!-- ============================================================ -->
+            <!-- VIEW: SIGNUP -->
+            <!-- ============================================================ -->
             <section id="view-signup" class="view">
-    <div class="auth-card card">
-        <div class="logo-container">
-            <i class="fa-solid fa-graduation-cap logo-icon"></i>
-        </div>
-        <h2>CREATE ACCOUNT</h2>
-        <form id="form-signup" onsubmit="handleSignup(event)">
-            <div class="input-group">
-                <i class="fa-solid fa-id-card input-icon"></i>
-                <input type="text" id="signup-id" placeholder="STUDENT ID" required>
-            </div>
-            <div class="input-group">
-                <i class="fa-solid fa-user input-icon"></i>
-                <input type="text" id="signup-name" placeholder="FULL NAME" required>
-            </div>
-            <div class="input-group">
-                <i class="fa-solid fa-envelope input-icon"></i>
-                <input type="email" id="signup-email" placeholder="EMAIL" required>
-            </div>
-            <div class="input-group">
-                <i class="fa-solid fa-lock input-icon"></i>
-                <input type="password" id="signup-pass" placeholder="PASSWORD" required>
-                <i class="fa-solid fa-eye toggle-pass" onclick="togglePassword('signup-pass', this)"></i>
-            </div>
-            <!-- ✅ NEW: Confirm Password Field -->
-            <div class="input-group">
-                <i class="fa-solid fa-lock input-icon"></i>
-                <input type="password" id="signup-confirm" placeholder="CONFIRM PASSWORD" required>
-                <i class="fa-solid fa-eye toggle-pass" onclick="togglePassword('signup-confirm', this)"></i>
-            </div>
-            <button type="submit" class="btn btn-primary">CREATE ACC</button>
-        </form>
-        <div class="auth-links">
-            <p>Already have an account? <a href="#" onclick="switchView('view-login')">LOG IN</a></p>
-        </div>
-    </div>
-</section>
+                <div class="auth-card card">
+                    <div class="logo-container">
+                        <i class="fa-solid fa-graduation-cap logo-icon"></i>
+                    </div>
+                    <h2>CREATE ACCOUNT</h2>
+                    <form id="form-signup" onsubmit="handleSignup(event)">
+                        <div class="input-group">
+                            <i class="fa-solid fa-id-card input-icon"></i>
+                            <input type="text" id="signup-id" placeholder="STUDENT ID" required />
+                        </div>
+                        <div class="input-group">
+                            <i class="fa-solid fa-user input-icon"></i>
+                            <input type="text" id="signup-name" placeholder="FULL NAME" required />
+                        </div>
+                        <div class="input-group">
+                            <i class="fa-solid fa-envelope input-icon"></i>
+                            <input type="email" id="signup-email" placeholder="EMAIL" required />
+                        </div>
+                        <div class="input-group">
+                            <i class="fa-solid fa-lock input-icon"></i>
+                            <input type="password" id="signup-pass" placeholder="PASSWORD" required />
+                            <i class="fa-solid fa-eye toggle-pass" onclick="togglePassword('signup-pass', this)"></i>
+                        </div>
+                        <div class="input-group">
+                            <i class="fa-solid fa-lock input-icon"></i>
+                            <input type="password" id="signup-confirm" placeholder="CONFIRM PASSWORD" required />
+                            <i class="fa-solid fa-eye toggle-pass" onclick="togglePassword('signup-confirm', this)"></i>
+                        </div>
+                        <button type="submit" class="btn btn-primary">CREATE ACC</button>
+                    </form>
+                    <div class="auth-links">
+                        <p>Already have an account? <a onclick="switchView('view-login')">LOG IN</a></p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ============================================================ -->
+            <!-- VIEW: STUDENT DASHBOARD -->
+            <!-- ============================================================ -->
             <section id="view-student-dash" class="view">
-    <div class="user-header card">
-        <div>
-            <span class="subtext">Welcome, Student</span>
-            <h3 id="student-display-name">Juan Dela Cruz</h3>
-            <p class="subtext" style="font-size:0.8rem;">ID: <span id="student-display-id">2024-00123</span></p>
-        </div>
-        <button class="icon-btn"><i class="fa-regular fa-bell"></i></button>
-    </div>
-
-    <div class="card metrics-card">
-        <h4>ATTENDANCE SUMMARY</h4>
-        <div class="metrics-grid">
-            <div class="metric">
-                <span class="metric-val" id="total-events">12</span>
-                <span class="metric-lbl">Total Events</span>
-            </div>
-            <div class="metric highlight-green">
-                <span class="metric-val" id="present-count">10</span>
-                <span class="metric-lbl">Present</span>
-            </div>
-            <div class="metric highlight-red">
-                <span class="metric-val">2</span>
-                <span class="metric-lbl">Absent</span>
-            </div>
-            <div class="metric">
-                <span class="metric-val">83%</span>
-                <span class="metric-lbl">Rate</span>
-            </div>
-        </div>
-    </div>
-
-    <!-- STUDENT QR CODE CARD (Replaces the old Active Event + Scan button) -->
-    <div class="card student-qr-card text-center">
-        <h4>YOUR ATTENDANCE QR</h4>
-        <div id="student-qr-code" style="margin: 10px auto; width: 150px; height: 150px;">
-            <img id="student-qr-img" src="images/rick_final.png" alt="Student QR Code" style="width:100%; height:100%;">
-        </div>
-        <p class="subtext" style="margin-top: 8px;">Show this to the admin to mark your attendance</p>
-        <button class="btn btn-primary" onclick="enlargeQR()" style="margin-top: 10px;">
-            <i class="fa-solid fa-expand"></i> ENLARGE QR
-        </button>
-    </div>
-
-    <!-- Active Event Info (Read-only for student) -->
-    <div class="card active-session-card">
-        <div class="badge-tag">CURRENT EVENT</div>
-        <h3 id="dash-event-name">General Assembly 2024</h3>
-        <p><i class="fa-solid fa-location-dot"></i> <span id="dash-event-loc">Main Hall</span></p>
-        <p><i class="fa-regular fa-clock"></i> <span id="dash-event-time">Today • 10:00 AM</span></p>
-    </div>
-</section>
-
-            <section id="view-scanner" class="view dark-view">
-                <div class="scanner-header">
-                    <button class="back-btn" onclick="stopQRScanner(); 
-    if (window._currentEventName) { 
-        switchView('view-event-detail'); 
-    } else { 
-        switchView('view-student-dash'); 
-    }">
-    <i class="fa-solid fa-arrow-left"></i>
-</button>
-                    <h3>Scan Event QR Code</h3>
+                <div class="user-header card">
+                    <div>
+                        <span class="subtext">Welcome, Student</span>
+                        <h3 id="student-display-name">Juan Dela Cruz</h3>
+                        <p class="subtext" style="font-size:0.8rem;">ID: <span id="student-display-id">2024-00123</span></p>
+                    </div>
+                    <button class="icon-btn"><i class="fa-regular fa-bell"></i></button>
                 </div>
 
+                <div class="card metrics-card">
+                    <h4>ATTENDANCE SUMMARY</h4>
+                    <div class="metrics-grid">
+                        <div class="metric">
+                            <span class="metric-val" id="total-events">0</span>
+                            <span class="metric-lbl">Total Events</span>
+                        </div>
+                        <div class="metric highlight-green">
+                            <span class="metric-val" id="present-count">0</span>
+                            <span class="metric-lbl">Present</span>
+                        </div>
+                        <div class="metric highlight-red">
+                            <span class="metric-val" id="absent-count">0</span>
+                            <span class="metric-lbl">Absent</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-val" id="attendance-rate">0%</span>
+                            <span class="metric-lbl">Rate</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Student QR -->
+                <div class="card student-qr-card text-center">
+                    <h4>YOUR ATTENDANCE QR</h4>
+                    <div id="student-qr-code" style="margin:10px auto; width:150px; height:150px;">
+                        <img id="student-qr-img" src="" alt="Student QR" style="width:100%; height:100%;" />
+                    </div>
+                    <p class="subtext" style="margin-top:8px;">Show this to the admin to mark your attendance</p>
+                    <button class="btn btn-primary" onclick="enlargeQR()" style="margin-top:10px;">
+                        <i class="fa-solid fa-expand"></i> ENLARGE QR
+                    </button>
+                </div>
+
+                <!-- Active Event -->
+                <div class="card active-session-card">
+                    <div class="badge-tag">CURRENT EVENT</div>
+                    <h3 id="dash-event-name">General Assembly 2024</h3>
+                    <p><i class="fa-solid fa-location-dot"></i> <span id="dash-event-loc">Main Hall</span></p>
+                    <p><i class="fa-regular fa-clock"></i> <span id="dash-event-time">Today • 10:00 AM</span></p>
+                </div>
+            </section>
+
+            <!-- ============================================================ -->
+            <!-- VIEW: SCANNER (Student scans Event QR) -->
+            <!-- ============================================================ -->
+            <section id="view-scanner" class="view dark-view">
+                <div class="scanner-header">
+                    <button class="back-btn" onclick="stopQRScanner(); switchView('view-student-dash');">
+                        <i class="fa-solid fa-arrow-left"></i>
+                    </button>
+                    <h3>Scan Event QR</h3>
+                </div>
                 <div class="scanner-viewport">
                     <div id="reader"></div>
                     <div class="scanner-overlay">
@@ -162,26 +175,27 @@
                         </div>
                     </div>
                 </div>
-
                 <p class="scan-instruction">Position the QR code inside the frame</p>
-
                 <div id="camera-notice" class="camera-notice hidden">
                     <i class="fa-solid fa-triangle-exclamation"></i>
-                    <span>Camera access requires HTTPS or Localhost. Demo auto-scan available below.</span>
+                    <span>Camera access requires HTTPS or Localhost. Use demo scan below.</span>
                 </div>
-
                 <div class="scanner-controls">
-                    <button class="btn btn-secondary" onclick="simulateScan()"><i class="fa-solid fa-bolt"></i> Simulate QR Scan</button>
+                    <button class="btn btn-secondary" onclick="simulateScan()">
+                        <i class="fa-solid fa-bolt"></i> Simulate QR Scan
+                    </button>
                 </div>
             </section>
 
+            <!-- ============================================================ -->
+            <!-- VIEW: SUCCESS (Attendance recorded) -->
+            <!-- ============================================================ -->
             <section id="view-success" class="view">
                 <div class="card confirmation-card">
                     <div class="success-icon-wrap">
                         <i class="fa-solid fa-circle-check"></i>
                     </div>
                     <h2>ATTENDANCE RECORDED</h2>
-
                     <div class="receipt-details">
                         <div class="receipt-row">
                             <span>Student Name:</span>
@@ -191,7 +205,7 @@
                             <span>Student ID:</span>
                             <strong id="rec-id">2024-00123</strong>
                         </div>
-                        <hr class="divider">
+                        <hr class="divider" />
                         <div class="receipt-row">
                             <span>Event:</span>
                             <strong id="rec-event">General Assembly 2024</strong>
@@ -205,170 +219,181 @@
                             <strong id="rec-time">10:02 AM</strong>
                         </div>
                     </div>
-
-<button class="btn btn-primary" id="success-done-btn" onclick="switchView('view-student-dash')">DONE</button>                </div>
+                    <button class="btn btn-primary" id="success-done-btn" onclick="switchView('view-student-dash')">DONE</button>
+                </div>
             </section>
 
+            <!-- ============================================================ -->
+            <!-- VIEW: STUDENT RECORDS -->
+            <!-- ============================================================ -->
             <section id="view-records" class="view">
                 <h3>Attendance Records</h3>
-                <div class="filter-controls" style="margin-bottom: 12px;">
+                <div class="filter-controls" style="margin-bottom:12px;">
                     <div class="input-group">
                         <i class="fa-solid fa-magnifying-glass input-icon"></i>
-                        <input type="text" id="record-search" placeholder="Search event..." onkeyup="filterRecords()">
+                        <input type="text" id="record-search" placeholder="Search event..." onkeyup="filterRecords()" />
                     </div>
                 </div>
                 <div id="records-list" class="records-container"></div>
             </section>
 
+            <!-- ============================================================ -->
+            <!-- VIEW: ADMIN LOGIN -->
+            <!-- ============================================================ -->
             <section id="view-admin-login" class="view">
                 <div class="auth-card card admin-theme">
                     <div class="logo-container admin-accent">
                         <i class="fa-solid fa-user-shield logo-icon"></i>
                     </div>
                     <h2>ADMIN LOG-IN</h2>
-                    <form onsubmit="event.preventDefault(); switchView('view-admin-dash');">
+                    <form id="form-admin-login" onsubmit="handleAdminLogin(event)">
                         <div class="input-group">
                             <i class="fa-solid fa-envelope input-icon"></i>
-                            <input type="text" value="admin@school.com" required>
+                            <input type="text" id="admin-email" value="admin@school.com" required />
                         </div>
                         <div class="input-group">
                             <i class="fa-solid fa-lock input-icon"></i>
-                            <input type="password" value="password" required>
+                            <input type="password" id="admin-pass" value="password" required />
                         </div>
                         <button type="submit" class="btn btn-purple">LOG IN</button>
                     </form>
                     <div class="auth-links">
-                        <p><a href="#" onclick="switchView('view-login')">Back to Student Login</a></p>
+                        <p><a onclick="switchView('view-login')">Back to Student Login</a></p>
                     </div>
                 </div>
             </section>
 
+            <!-- ============================================================ -->
+            <!-- VIEW: ADMIN DASHBOARD -->
+            <!-- ============================================================ -->
             <section id="view-admin-dash" class="view">
-    <div class="user-header card admin-theme">
-        <div>
-            <span class="subtext">Admin Control</span>
-            <h3>WELCOME ADMIN</h3>
-        </div>
-        <button class="btn btn-small btn-purple" onclick="switchView('view-admin-create-event')">+ Create Event</button>
-    </div>
+                <div class="user-header card admin-theme">
+                    <div>
+                        <span class="subtext">Admin Control</span>
+                        <h3>WELCOME ADMIN</h3>
+                    </div>
+                    <button class="btn btn-small btn-purple" onclick="switchView('view-admin-create-event')">
+                        + Create Event
+                    </button>
+                </div>
 
-    <div class="card metrics-card">
-        <h4>TODAY'S ATTENDANCE</h4>
-        <div class="metrics-grid">
-            <div class="metric highlight-green">
-                <span class="metric-val" id="admin-total-val">50</span>
-                <span class="metric-lbl">TOTAL</span>
-            </div>
-            <div class="metric highlight-green">
-                <span class="metric-val" id="admin-present-val">42</span>
-                <span class="metric-lbl">PRESENT</span>
-            </div>
-        </div>
-    </div>
+                <div class="card metrics-card">
+                    <h4>TODAY'S ATTENDANCE</h4>
+                    <div class="metrics-grid">
+                        <div class="metric highlight-green">
+                            <span class="metric-val" id="admin-total-val">0</span>
+                            <span class="metric-lbl">TOTAL</span>
+                        </div>
+                        <div class="metric highlight-green">
+                            <span class="metric-val" id="admin-present-val">0</span>
+                            <span class="metric-lbl">PRESENT</span>
+                        </div>
+                    </div>
+                </div>
 
-    <!-- ✅ EVENTS LIST (Replaces old scanner card) -->
-    <div class="card">
-        <h4>MANAGE EVENTS</h4>
-        <div id="admin-events-list">
-            <!-- Events will be rendered here -->
-        </div>
-    </div>
+                <div class="card">
+                    <h4>MANAGE EVENTS</h4>
+                    <div id="admin-events-list">
+                        <p class="subtext" style="text-align:center; padding:20px 0;">No events created yet.</p>
+                    </div>
+                </div>
 
-    <div class="card text-center">
-        <div id="sync-status-indicator">
-            <p id="sync-msg" class="subtext" style="margin-bottom: 10px;">Pending Local Records: <span id="pending-count">0</span></p>
-        </div>
-        <button class="btn btn-action" onclick="syncData()"><i class="fa-solid fa-rotate"></i> SYNC NOW</button>
-    </div>
+                <div class="card text-center">
+                    <div id="sync-status-indicator">
+                        <p class="subtext" style="margin-bottom:10px;">
+                            Pending Local Records: <span id="pending-count">0</span>
+                        </p>
+                    </div>
+                    <button class="btn btn-action" onclick="syncData()">
+                        <i class="fa-solid fa-rotate"></i> SYNC NOW
+                    </button>
+                </div>
 
-    <div class="card">
-        <h4>RECENT ATTENDANCE</h4>
-        <div id="admin-recent-list"></div>
-    </div>
-</section>
+                <div class="card">
+                    <h4>RECENT ATTENDANCE</h4>
+                    <div id="admin-recent-list"></div>
+                </div>
+            </section>
 
+            <!-- ============================================================ -->
+            <!-- VIEW: ADMIN CREATE EVENT -->
+            <!-- ============================================================ -->
             <section id="view-admin-create-event" class="view">
-    <div class="card">
-        <h3>ADD EVENTS</h3>
-        <form id="create-event-form" onsubmit="handleCreateEvent(event)">
-            <div class="input-group">
-                <input type="text" id="ev-name" placeholder="Event Name" required>
-            </div>
-            <div class="input-group">
-                <input type="text" id="ev-loc" placeholder="Location" required>
-            </div>
-            <div class="input-group">
-                <input type="date" id="ev-date" required>   
-            </div>
-            <div class="input-group">
-                <input type="time" id="ev-time" required>
-            </div>
-            <div class="btn-row">
-                <button type="button" class="btn btn-secondary" onclick="switchView('view-admin-dash')">CANCEL</button>
-                <button type="submit" class="btn btn-primary">CREATE EVENT</button>
-            </div>
-        </form>
-    </div>
-</section>
-            <!-- EVENT DETAIL / MANAGE EVENT (Admin scans here) -->
-<section id="view-event-detail" class="view">
-    <div class="card admin-theme" style="border-top: 4px solid var(--purple);">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-            <button class="back-btn" onclick="switchView('view-admin-dash')" style="color: var(--text);">
-                <i class="fa-solid fa-arrow-left"></i> Back
-            </button>
-            <span class="badge-tag" style="position: static; background: var(--purple); color: white;">ACTIVE</span>
-        </div>
-        
-        <h3 id="event-detail-name">Event Name</h3>
-        <p><i class="fa-solid fa-location-dot"></i> <span id="event-detail-loc">Location</span></p>
-        <p><i class="fa-regular fa-clock"></i> <span id="event-detail-time">Date & Time</span></p>
-        
-        <hr style="margin: 16px 0; border-color: #e2e8f0;">
-        
-        <!-- SCAN STUDENT QR - ONLY FOR THIS EVENT -->
-        <div class="card text-center" style="border: 2px dashed var(--purple); background: #faf5ff;">
-            <h4><i class="fa-solid fa-qrcode"></i> SCAN STUDENT QR</h4>
-            <p class="subtext">Scan the student's QR code to mark them present for this event</p>
-            <button class="btn btn-purple" onclick="startEventScanner()">
-                <i class="fa-solid fa-camera"></i> SCAN FOR THIS EVENT
-            </button>
-        </div>
-        
-        <div style="margin-top: 16px;">
-            <h4>ATTENDEES (<span id="event-attendee-count">0</span>)</h4>
-            <div id="event-attendee-list" style="max-height: 200px; overflow-y: auto;">
-                <p class="subtext" style="text-align: center; padding: 20px 0;">No students checked in yet</p>
-            </div>
-        </div>
-    </div>
-</section>
-        </div>
-        <!-- Enlarged QR Modal -->
+                <div class="card">
+                    <h3>ADD EVENTS</h3>
+                    <form id="create-event-form" onsubmit="handleCreateEvent(event)">
+                        <div class="input-group">
+                            <input type="text" id="ev-name" placeholder="Event Name" required />
+                        </div>
+                        <div class="input-group">
+                            <input type="text" id="ev-loc" placeholder="Location" required />
+                        </div>
+                        <div class="input-group">
+                            <input type="date" id="ev-date" required />
+                        </div>
+                        <div class="input-group">
+                            <input type="time" id="ev-time" required />
+                        </div>
+                        <div class="btn-row">
+                            <button type="button" class="btn btn-secondary" onclick="switchView('view-admin-dash')">CANCEL</button>
+                            <button type="submit" class="btn btn-primary">CREATE EVENT</button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <!-- ============================================================ -->
+            <!-- VIEW: EVENT DETAIL (Admin scans student QR here) -->
+            <!-- ============================================================ -->
+            <section id="view-event-detail" class="view">
+                <div class="card admin-theme" style="border-top:4px solid var(--purple);">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                        <button class="back-btn" onclick="switchView('view-admin-dash')" style="color:var(--text);">
+                            <i class="fa-solid fa-arrow-left"></i> Back
+                        </button>
+                        <span class="badge-tag" style="position:static; background:var(--purple); color:#fff;">ACTIVE</span>
+                    </div>
+                    <h3 id="event-detail-name">Event Name</h3>
+                    <p><i class="fa-solid fa-location-dot"></i> <span id="event-detail-loc">Location</span></p>
+                    <p><i class="fa-regular fa-clock"></i> <span id="event-detail-time">Date & Time</span></p>
+                    <hr style="margin:16px 0; border-color:#e2e8f0;" />
+                    <!-- Scan Student QR -->
+                    <div class="card text-center" style="border:2px dashed var(--purple); background:#faf5ff;">
+                        <h4><i class="fa-solid fa-qrcode"></i> SCAN STUDENT QR</h4>
+                        <p class="subtext">Scan the student's QR code to mark them present for this event</p>
+                        <button class="btn btn-purple" onclick="startEventScanner()">
+                            <i class="fa-solid fa-camera"></i> SCAN FOR THIS EVENT
+                        </button>
+                    </div>
+                    <div style="margin-top:16px;">
+                        <h4>ATTENDEES (<span id="event-attendee-count">0</span>)</h4>
+                        <div id="event-attendee-list" style="max-height:200px; overflow-y:auto;">
+                            <p class="subtext" style="text-align:center; padding:20px 0;">No students checked in yet</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div><!-- /view-scroll-area -->
+
+        <!-- ===== ENLARGED QR MODAL ===== -->
         <div id="qr-enlarged-modal" class="modal-overlay hidden" onclick="closeEnlargedQR()">
             <div class="modal-content" onclick="event.stopPropagation();">
-                <img id="enlarged-qr-img" src="" alt="Enlarged QR" style="width:100%; max-width:280px; height:auto;">
+                <img id="enlarged-qr-img" src="" alt="Enlarged QR" style="width:100%; max-width:280px; height:auto;" />
                 <p style="font-weight:bold; margin-top:12px;" id="enlarged-qr-label">Student ID: 2024-00123</p>
                 <button class="btn btn-secondary" onclick="closeEnlargedQR()" style="margin-top:16px;">Close</button>
             </div>
         </div>
-        <div id="toast" class="toast hidden">Notification message</div>
 
-                <!-- ====== ENLARGED QR MODAL ====== -->
-        <div id="qr-enlarged-modal" class="modal-overlay hidden" onclick="closeEnlargedQR()">
-            <div class="modal-content" onclick="event.stopPropagation();">
-                <img id="enlarged-qr-img" src="" alt="Enlarged QR" style="width:100%; max-width:280px; height:auto;">
-                <p style="font-weight:bold; margin-top:12px;" id="enlarged-qr-label">Student ID: 2024-00123</p>
-                <button class="btn btn-secondary" onclick="closeEnlargedQR()" style="margin-top:16px;">Close</button>
-            </div>
-        </div>
-        <!-- ====== END MODAL ====== -->
+        <!-- ===== TOAST ===== -->
+        <div id="toast" class="toast hidden">Notification</div>
 
-        <nav class="bottom-nav" id="bottom-nav">
-            <!-- Dynamically generated by JavaScript -->
-        </nav>
+        <!-- ===== BOTTOM NAV ===== -->
+        <nav class="bottom-nav" id="bottom-nav"></nav>
 
-    </main>
+    </div><!-- /app-container -->
+
+    <!-- External JavaScript -->
     <script src="script.js"></script>
 </body>
 
