@@ -3,7 +3,7 @@
 ================================================================ */
 const APP_STATE = {
     isOnline: false,
-    isLoggedIn: false,
+    isLoggedIn: false,          // ✅ track login status
     user: { name: "Juan Dela Cruz", id: "2024-00123", role: 'student' },
     activeEvent: { name: "General Assembly 2024", location: "Main Hall", time: "10:00 AM" },
     records: []
@@ -87,7 +87,21 @@ function showToast(message) {
 }
 
 /* ================================================================
-   VIEW NAVIGATION
+   UPDATE NAV VISIBILITY (NEW)
+================================================================ */
+function updateNavVisibility(viewId) {
+    const nav = document.getElementById('bottom-nav');
+    if (!nav) return;
+    const authViews = ['view-login', 'view-signup', 'view-admin-login'];
+    if (authViews.includes(viewId) || !APP_STATE.isLoggedIn) {
+        nav.style.display = 'none';
+    } else {
+        nav.style.display = 'flex';
+    }
+}
+
+/* ================================================================
+   VIEW NAVIGATION (updated)
 ================================================================ */
 function switchView(viewId) {
     // Remember where we came from when going to scanner
@@ -104,28 +118,9 @@ function switchView(viewId) {
     document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
     const target = document.getElementById(viewId);
     if (target) target.classList.add("active");
+
+    // ✅ Show/hide bottom nav based on view and login status
     updateNavVisibility(viewId);
-
-    if (viewId === 'view-event-history') {
-        renderHistoryEvents();
-    }
-}
-
-// ✅ FIXED: Go back to the view we came from
-function goBackFromScanner() {
-    const targetView = previousViewBeforeScanner || 'view-student-dash';
-    previousViewBeforeScanner = null;
-    if (targetView === 'view-scanner') {
-        switchView('view-student-dash');
-        return;
-    }
-
-    // Stop scanner and switch after a short delay to ensure it's fully released
-    stopQRScanner();
-    // Give the scanner time to clean up
-    setTimeout(() => {
-        switchView(targetView);
-    }, 300);
 }
 
 function setActiveNav(btn) {
@@ -208,7 +203,7 @@ function handleStudentLogin(e) {
         return;
     }
 
-    APP_STATE.isLoggedIn = true;
+    APP_STATE.isLoggedIn = true;   // ✅ set logged in
     APP_STATE.user = { name: user.name, id: user.id, role: 'student' };
     document.getElementById('student-display-name').innerText = user.name;
     document.getElementById('student-display-id').innerText = user.id;
@@ -229,7 +224,7 @@ function handleAdminLogin(e) {
     const password = document.getElementById('admin-pass').value.trim();
 
     if (email === 'admin@school.com' && password === 'password') {
-        APP_STATE.isLoggedIn = true;
+        APP_STATE.isLoggedIn = true;   // ✅ set logged in
         APP_STATE.user.role = 'admin';
         renderNav();
         loadLocalRecords();
@@ -243,21 +238,8 @@ function handleAdminLogin(e) {
     }
 }
 
-function logout() {
-    showConfirmDialog('Are you sure you want to logout?', () => {
-        stopQRScanner();
-        APP_STATE.isLoggedIn = false;
-        APP_STATE.user.role = 'student';
-        renderNav();
-        switchView('view-login');
-        showToast('Logged out');
-    }, () => {
-        showToast('Logout cancelled');
-    });
-}
-
 /* ================================================================
-   CONFIRM DIALOG
+   CUSTOM CONFIRMATION DIALOG
 ================================================================ */
 function showConfirmDialog(message, onConfirm, onCancel) {
     const modal = document.getElementById('confirm-modal');
@@ -282,6 +264,22 @@ function showConfirmDialog(message, onConfirm, onCancel) {
     });
 
     modal.classList.remove('hidden');
+}
+
+/* ================================================================
+   LOGOUT (updated)
+================================================================ */
+function logout() {
+    showConfirmDialog('Are you sure you want to logout?', () => {
+        stopQRScanner();
+        APP_STATE.isLoggedIn = false;   // ✅ set logged out
+        APP_STATE.user.role = 'student';
+        renderNav();                    // will hide nav
+        switchView('view-login');
+        showToast('Logged out');
+    }, () => {
+        showToast('Logout cancelled');
+    });
 }
 
 /* ================================================================
@@ -318,6 +316,7 @@ function renderNav() {
         `;
     }
     nav.innerHTML = html;
+    // ✅ Show nav only if logged in
     nav.style.display = APP_STATE.isLoggedIn ? 'flex' : 'none';
 }
 
@@ -844,7 +843,7 @@ document.addEventListener("DOMContentLoaded", () => {
     renderRecords();
     renderAdminRecent();
     generateStudentQR();
-    renderNav();
+    renderNav();                    // will hide nav because isLoggedIn = false
     renderAdminEvents();
     renderTodayEvents();
 
@@ -853,5 +852,5 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("dash-event-loc").innerText = ev.location;
     document.getElementById("dash-event-time").innerText = ev.time;
 
-    switchView('view-login');
+    switchView('view-login');       // starts at login, nav hidden
 });
