@@ -682,3 +682,77 @@ h4 {
         padding-top: 16px;
     }
 }
+/* ===== HISTORY VIEW ===== */
+#history-events-list .record-card {
+    cursor: pointer;
+}
+#history-events-list .record-card:hover {
+    background: #f8fafc;
+}
+.attendee-detail {
+    margin-top: 10px;
+    padding: 12px;
+    background: #f8fafc;
+    border-radius: 12px;
+}
+.attendee-detail .receipt-row {
+    padding: 6px 0;
+    border-bottom: 1px solid #e2e8f0;
+}
+.attendee-detail .receipt-row:last-child {
+    border-bottom: none;
+}
+.today-event-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #e2e8f0;
+}
+.today-event-item:last-child {
+    border-bottom: none;
+}
+.today-event-item .event-name {
+    font-weight: 600;
+}
+.today-event-item .event-attendees {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+/* ===== HISTORY VIEW ===== */
+#history-events-list .record-card {
+    cursor: pointer;
+}
+#history-events-list .record-card:hover {
+    background: #f8fafc;
+}
+.attendee-detail {
+    margin-top: 10px;
+    padding: 12px;
+    background: #f8fafc;
+    border-radius: 12px;
+}
+.attendee-detail .receipt-row {
+    padding: 6px 0;
+    border-bottom: 1px solid #e2e8f0;
+}
+.attendee-detail .receipt-row:last-child {
+    border-bottom: none;
+}
+.today-event-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #e2e8f0;
+}
+.today-event-item:last-child {
+    border-bottom: none;
+}
+.today-event-item .event-name {
+    font-weight: 600;
+}
+.today-event-item .event-attendees {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}

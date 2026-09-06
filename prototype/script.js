@@ -3,6 +3,7 @@
 ================================================================ */
 const APP_STATE = {
     isOnline: false,
+    isLoggedIn: false,
     user: { name: "Juan Dela Cruz", id: "2024-00123", role: 'student' },
     activeEvent: { name: "General Assembly 2024", location: "Main Hall", time: "10:00 AM" },
     records: []
@@ -12,6 +13,8 @@ let html5QrCodeScanner = null;
 let currentEventId = null;
 let currentEventName = null;
 let currentEventLocation = null;
+let previousViewBeforeScanner = null;
+let isScannerStopping = false;   // flag to prevent double stop
 
 /* ================================================================
    LOCAL STORAGE HELPERS
@@ -66,7 +69,6 @@ function updateCounters() {
     if (absentEl) absentEl.innerText = absent;
     if (rateEl) rateEl.innerText = rate + '%';
 
-    // Admin metrics
     const adminTotal = document.getElementById("admin-total-val");
     const adminPresent = document.getElementById("admin-present-val");
     if (adminTotal) adminTotal.innerText = total;
@@ -88,12 +90,42 @@ function showToast(message) {
    VIEW NAVIGATION
 ================================================================ */
 function switchView(viewId) {
+    // Remember where we came from when going to scanner
+    if (viewId === 'view-scanner') {
+        const activeView = document.querySelector('.view.active');
+        previousViewBeforeScanner = activeView ? activeView.id : 'view-student-dash';
+    }
+
+    // If we are leaving the scanner view, stop the scanner
     if (viewId !== 'view-scanner') {
         stopQRScanner();
     }
+
     document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
     const target = document.getElementById(viewId);
     if (target) target.classList.add("active");
+    updateNavVisibility(viewId);
+
+    if (viewId === 'view-event-history') {
+        renderHistoryEvents();
+    }
+}
+
+// ✅ FIXED: Go back to the view we came from
+function goBackFromScanner() {
+    const targetView = previousViewBeforeScanner || 'view-student-dash';
+    previousViewBeforeScanner = null;
+    if (targetView === 'view-scanner') {
+        switchView('view-student-dash');
+        return;
+    }
+
+    // Stop scanner and switch after a short delay to ensure it's fully released
+    stopQRScanner();
+    // Give the scanner time to clean up
+    setTimeout(() => {
+        switchView(targetView);
+    }, 300);
 }
 
 function setActiveNav(btn) {
@@ -110,6 +142,17 @@ function togglePassword(inputId, icon) {
     } else {
         input.type = "password";
         icon.classList.replace("fa-eye-slash", "fa-eye");
+    }
+}
+
+function updateNavVisibility(viewId) {
+    const nav = document.getElementById('bottom-nav');
+    if (!nav) return;
+    const authViews = ['view-login', 'view-signup', 'view-admin-login'];
+    if (authViews.includes(viewId) || !APP_STATE.isLoggedIn) {
+        nav.style.display = 'none';
+    } else {
+        nav.style.display = 'flex';
     }
 }
 
@@ -165,6 +208,7 @@ function handleStudentLogin(e) {
         return;
     }
 
+    APP_STATE.isLoggedIn = true;
     APP_STATE.user = { name: user.name, id: user.id, role: 'student' };
     document.getElementById('student-display-name').innerText = user.name;
     document.getElementById('student-display-id').innerText = user.id;
@@ -174,6 +218,7 @@ function handleStudentLogin(e) {
     loadLocalRecords();
     renderRecords();
     renderAdminRecent();
+    renderTodayEvents();
     switchView('view-student-dash');
     showToast(`Welcome, ${user.name}!`);
 }
@@ -184,11 +229,13 @@ function handleAdminLogin(e) {
     const password = document.getElementById('admin-pass').value.trim();
 
     if (email === 'admin@school.com' && password === 'password') {
+        APP_STATE.isLoggedIn = true;
         APP_STATE.user.role = 'admin';
         renderNav();
         loadLocalRecords();
         renderAdminEvents();
         renderAdminRecent();
+        renderTodayEvents();
         switchView('view-admin-dash');
         showToast('Admin logged in!');
     } else {
@@ -197,11 +244,44 @@ function handleAdminLogin(e) {
 }
 
 function logout() {
-    stopQRScanner();
-    APP_STATE.user.role = 'student';
-    renderNav();
-    switchView('view-login');
-    showToast('Logged out');
+    showConfirmDialog('Are you sure you want to logout?', () => {
+        stopQRScanner();
+        APP_STATE.isLoggedIn = false;
+        APP_STATE.user.role = 'student';
+        renderNav();
+        switchView('view-login');
+        showToast('Logged out');
+    }, () => {
+        showToast('Logout cancelled');
+    });
+}
+
+/* ================================================================
+   CONFIRM DIALOG
+================================================================ */
+function showConfirmDialog(message, onConfirm, onCancel) {
+    const modal = document.getElementById('confirm-modal');
+    const msgEl = document.getElementById('confirm-message');
+    const okBtn = document.getElementById('confirm-ok-btn');
+    const cancelBtn = document.getElementById('confirm-cancel-btn');
+
+    msgEl.innerText = message;
+
+    const newOk = okBtn.cloneNode(true);
+    const newCancel = cancelBtn.cloneNode(true);
+    okBtn.parentNode.replaceChild(newOk, okBtn);
+    cancelBtn.parentNode.replaceChild(newCancel, cancelBtn);
+
+    newOk.addEventListener('click', () => {
+        modal.classList.add('hidden');
+        if (onConfirm) onConfirm();
+    });
+    newCancel.addEventListener('click', () => {
+        modal.classList.add('hidden');
+        if (onCancel) onCancel();
+    });
+
+    modal.classList.remove('hidden');
 }
 
 /* ================================================================
@@ -229,8 +309,8 @@ function renderNav() {
             <button class="nav-item active" onclick="switchView('view-admin-dash'); setActiveNav(this)">
                 <i class="fa-solid fa-gauge-high"></i><span>Dashboard</span>
             </button>
-            <button class="nav-item" onclick="switchView('view-admin-create-event'); setActiveNav(this)">
-                <i class="fa-solid fa-plus-circle"></i><span>Create</span>
+            <button class="nav-item" onclick="syncData()">
+                <i class="fa-solid fa-cloud-upload-alt"></i><span>Sync</span>
             </button>
             <button class="nav-item" onclick="logout()">
                 <i class="fa-solid fa-right-from-bracket"></i><span>Logout</span>
@@ -238,10 +318,11 @@ function renderNav() {
         `;
     }
     nav.innerHTML = html;
+    nav.style.display = APP_STATE.isLoggedIn ? 'flex' : 'none';
 }
 
 /* ================================================================
-   QR CODE GENERATION (Student)
+   QR CODE GENERATION
 ================================================================ */
 function generateStudentQR() {
     const id = APP_STATE.user.id || '2024-00123';
@@ -272,7 +353,7 @@ function closeEnlargedQR() {
 }
 
 /* ================================================================
-   RECORDS
+   RECORDS & RENDERING
 ================================================================ */
 function renderRecords() {
     const list = document.getElementById("records-list");
@@ -351,10 +432,80 @@ function renderAdminEvents() {
 }
 
 /* ================================================================
+   TODAY'S EVENTS
+================================================================ */
+function renderTodayEvents() {
+    const container = document.getElementById('today-events-list');
+    if (!container) return;
+    const events = JSON.parse(localStorage.getItem('events') || '[]');
+    const today = new Date().toISOString().slice(0, 10);
+    const todayEvents = events.filter(e => e.date === today);
+
+    if (todayEvents.length === 0) {
+        container.innerHTML = '<p class="subtext" style="text-align:center; padding:10px 0;">No events for today.</p>';
+        return;
+    }
+
+    container.innerHTML = '';
+    todayEvents.forEach(event => {
+        const div = document.createElement('div');
+        div.className = 'today-event-item';
+        div.innerHTML = `
+            <span class="event-name">${event.name}</span>
+            <span class="event-attendees">${event.attendees ? event.attendees.length : 0} checked in</span>
+        `;
+        container.appendChild(div);
+    });
+}
+
+/* ================================================================
+   EVENT HISTORY
+================================================================ */
+function renderHistoryEvents() {
+    const container = document.getElementById('history-events-list');
+    if (!container) return;
+    const events = JSON.parse(localStorage.getItem('events') || '[]');
+    if (events.length === 0) {
+        container.innerHTML = '<p class="subtext" style="text-align:center; padding:20px 0;">No events found.</p>';
+        return;
+    }
+    container.innerHTML = '';
+    events.forEach(event => {
+        const card = document.createElement('div');
+        card.className = 'record-card';
+        card.style.marginBottom = '10px';
+        card.style.cursor = 'pointer';
+        const attendees = event.attendees || [];
+        const attendeeNames = attendees.map(a => a.name).join(', ') || 'No attendees';
+        card.innerHTML = `
+            <div style="flex:1;">
+                <strong>${event.name}</strong>
+                <div class="subtext">${event.location} • ${event.date} • ${event.time}</div>
+                <div class="subtext" style="font-size:0.75rem; color:var(--purple);">
+                    ${attendees.length} students checked in
+                </div>
+                <div class="attendee-detail hidden" style="margin-top:8px;">
+                    <strong>Attendees:</strong>
+                    <div>${attendeeNames}</div>
+                </div>
+            </div>
+            <button class="btn btn-small btn-secondary" onclick="toggleAttendees(this)">Show</button>
+        `;
+        container.appendChild(card);
+    });
+}
+
+function toggleAttendees(btn) {
+    const detail = btn.closest('.record-card').querySelector('.attendee-detail');
+    if (detail) {
+        detail.classList.toggle('hidden');
+        btn.innerText = detail.classList.contains('hidden') ? 'Show' : 'Hide';
+    }
+}
+
+/* ================================================================
    ATTENDANCE RECORDING
 ================================================================ */
-
-// --- Student scans Event QR ---
 function recordAttendance(eventName, location) {
     const now = new Date();
     const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -387,13 +538,11 @@ function recordAttendance(eventName, location) {
     showToast(`✅ Checked in to ${newRecord.event}!`);
 }
 
-// --- Admin scans Student QR for a specific event ---
 function recordAttendanceForEvent(studentId, studentName, eventName, location) {
     const now = new Date();
     const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     const dateStr = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 
-    // Update event attendees
     let events = JSON.parse(localStorage.getItem('events') || '[]');
     const eventIndex = events.findIndex(e => e.name === eventName);
     if (eventIndex === -1) {
@@ -408,12 +557,12 @@ function recordAttendanceForEvent(studentId, studentName, eventName, location) {
         switchView('view-event-detail');
         refreshEventDetail();
         renderAdminEvents();
+        renderTodayEvents();
         return;
     }
     events[eventIndex].attendees.push({ id: studentId, name: studentName, time: timeStr });
     localStorage.setItem('events', JSON.stringify(events));
 
-    // Global record
     const newRecord = {
         id: Date.now(),
         studentId: studentId,
@@ -429,6 +578,7 @@ function recordAttendanceForEvent(studentId, studentName, eventName, location) {
     renderRecords();
     renderAdminRecent();
     renderAdminEvents();
+    renderTodayEvents();
 
     document.getElementById("rec-student").innerText = studentName;
     document.getElementById("rec-id").innerText = studentId;
@@ -446,6 +596,7 @@ function recordAttendanceForEvent(studentId, studentName, eventName, location) {
                 switchView('view-event-detail');
                 refreshEventDetail();
                 renderAdminEvents();
+                renderTodayEvents();
             } else {
                 switchView('view-student-dash');
             }
@@ -492,18 +643,24 @@ function startQRScanner() {
     }
 }
 
+// ✅ FIXED: stopQRScanner now properly releases the camera and resets
 function stopQRScanner() {
+    if (isScannerStopping) return;
+    isScannerStopping = true;
     if (html5QrCodeScanner) {
         html5QrCodeScanner.stop().then(() => {
             html5QrCodeScanner.clear();
             html5QrCodeScanner = null;
-        }).catch(() => { html5QrCodeScanner = null; });
+            isScannerStopping = false;
+        }).catch(() => {
+            html5QrCodeScanner = null;
+            isScannerStopping = false;
+        });
+    } else {
+        isScannerStopping = false;
     }
 }
 
-/* ================================================================
-   SIMULATE SCANS
-================================================================ */
 function simulateScan() {
     if (currentEventName) {
         simulateEventScan();
@@ -580,6 +737,7 @@ function handleCreateEvent(e) {
     showToast(`✅ Event "${name}" created!`);
     switchView('view-admin-dash');
     renderAdminEvents();
+    renderTodayEvents();
     document.getElementById('create-event-form').reset();
 }
 
@@ -625,6 +783,8 @@ function startEventScanner() {
         showToast('No event selected.');
         return;
     }
+    // Update scanner title
+    document.getElementById('scanner-title').textContent = 'Scan Student QR';
     switchView('view-scanner');
 
     setTimeout(() => {
@@ -657,7 +817,7 @@ function startEventScanner() {
 }
 
 /* ================================================================
-   NETWORK STATUS (Simulated)
+   NETWORK STATUS
 ================================================================ */
 function updateNetworkStatus() {
     const statusEl = document.getElementById('status-text');
@@ -686,13 +846,12 @@ document.addEventListener("DOMContentLoaded", () => {
     generateStudentQR();
     renderNav();
     renderAdminEvents();
+    renderTodayEvents();
 
-    // Set default active event display
     const ev = APP_STATE.activeEvent;
     document.getElementById("dash-event-name").innerText = ev.name;
     document.getElementById("dash-event-loc").innerText = ev.location;
     document.getElementById("dash-event-time").innerText = ev.time;
 
-    // Start at login screen
     switchView('view-login');
 });
