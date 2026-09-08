@@ -140,10 +140,9 @@
                 </div>
             </section>
 
-            <!-- ===== VIEW: SCANNER (Student scans Event QR / Admin scans Student QR) ===== -->
+            <!-- ===== VIEW: SCANNER ===== -->
             <section id="view-scanner" class="view dark-view">
                 <div class="scanner-header">
-                    <!-- ✅ FIXED: Back button now calls goBackFromScanner() -->
                     <button class="back-btn" onclick="goBackFromScanner()">
                         <i class="fa-solid fa-arrow-left"></i>
                     </button>
@@ -302,7 +301,7 @@
                 </div>
             </section>
 
-            <!-- ===== VIEW: EVENT DETAIL (Admin scans student QR) ===== -->
+            <!-- ===== VIEW: EVENT DETAIL ===== -->
             <section id="view-event-detail" class="view">
                 <div class="card admin-theme" style="border-top:4px solid var(--purple);">
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
@@ -364,6 +363,19 @@
                     <button class="btn btn-secondary" style="flex:1;" id="confirm-cancel-btn">Cancel</button>
                     <button class="btn btn-primary" style="flex:1;" id="confirm-ok-btn">Yes</button>
                 </div>
+            </div>
+        </div>
+
+        <!-- ✅ NEW: SCANNED STUDENT CONFIRMATION MODAL -->
+        <div id="scanned-modal" class="modal-overlay hidden" onclick="closeScannedModal()">
+            <div class="modal-content" onclick="event.stopPropagation();" style="max-width:320px;">
+                <h3 style="margin-bottom:12px; text-align:center;">✅ Student Checked In</h3>
+                <div style="text-align:left; margin:12px 0; line-height:1.8;">
+                    <p><strong>Student ID:</strong> <span id="scanned-id"></span></p>
+                    <p><strong>Name:</strong> <span id="scanned-name"></span></p>
+                    <p><strong>Event:</strong> <span id="scanned-event"></span></p>
+                </div>
+                <button class="btn btn-primary" onclick="closeScannedModal()">OK</button>
             </div>
         </div>
 

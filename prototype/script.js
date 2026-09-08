@@ -14,7 +14,8 @@ let currentEventId = null;
 let currentEventName = null;
 let currentEventLocation = null;
 let previousViewBeforeScanner = null;
-let isScannerStopping = false;   // flag to prevent double stop
+let isScannerStopping = false;
+let scannedModalTarget = null;
 
 /* ================================================================
    LOCAL STORAGE HELPERS
@@ -90,13 +91,11 @@ function showToast(message) {
    VIEW NAVIGATION
 ================================================================ */
 function switchView(viewId) {
-    // Remember where we came from when going to scanner
     if (viewId === 'view-scanner') {
         const activeView = document.querySelector('.view.active');
         previousViewBeforeScanner = activeView ? activeView.id : 'view-student-dash';
     }
 
-    // If we are leaving the scanner view, stop the scanner
     if (viewId !== 'view-scanner') {
         stopQRScanner();
     }
@@ -111,7 +110,6 @@ function switchView(viewId) {
     }
 }
 
-// ✅ FIXED: Go back to the view we came from
 function goBackFromScanner() {
     const targetView = previousViewBeforeScanner || 'view-student-dash';
     previousViewBeforeScanner = null;
@@ -119,10 +117,7 @@ function goBackFromScanner() {
         switchView('view-student-dash');
         return;
     }
-
-    // Stop scanner and switch after a short delay to ensure it's fully released
     stopQRScanner();
-    // Give the scanner time to clean up
     setTimeout(() => {
         switchView(targetView);
     }, 300);
@@ -353,6 +348,25 @@ function closeEnlargedQR() {
 }
 
 /* ================================================================
+   SCANNED STUDENT CONFIRMATION MODAL
+================================================================ */
+function showScannedModal(studentId, studentName, eventName, targetView) {
+    document.getElementById('scanned-id').textContent = studentId;
+    document.getElementById('scanned-name').textContent = studentName;
+    document.getElementById('scanned-event').textContent = eventName;
+    scannedModalTarget = targetView || 'view-success';
+    document.getElementById('scanned-modal').classList.remove('hidden');
+}
+
+function closeScannedModal() {
+    document.getElementById('scanned-modal').classList.add('hidden');
+    if (scannedModalTarget) {
+        switchView(scannedModalTarget);
+        scannedModalTarget = null;
+    }
+}
+
+/* ================================================================
    RECORDS & RENDERING
 ================================================================ */
 function renderRecords() {
@@ -534,8 +548,8 @@ function recordAttendance(eventName, location) {
     document.getElementById("rec-time").innerText = timeStr;
 
     stopQRScanner();
-    switchView("view-success");
-    showToast(`✅ Checked in to ${newRecord.event}!`);
+    showScannedModal(APP_STATE.user.id, APP_STATE.user.name, newRecord.event, 'view-success');
+    showToast(`✅ ${APP_STATE.user.name} checked in!`);
 }
 
 function recordAttendanceForEvent(studentId, studentName, eventName, location) {
@@ -587,8 +601,9 @@ function recordAttendanceForEvent(studentId, studentName, eventName, location) {
     document.getElementById("rec-time").innerText = timeStr;
 
     stopQRScanner();
-    switchView("view-success");
+    showScannedModal(studentId, studentName, eventName, 'view-success');
 
+    // Override DONE button to return to event detail if admin
     const doneBtn = document.querySelector('#view-success .btn-primary');
     if (doneBtn) {
         doneBtn.onclick = function() {
@@ -643,7 +658,6 @@ function startQRScanner() {
     }
 }
 
-// ✅ FIXED: stopQRScanner now properly releases the camera and resets
 function stopQRScanner() {
     if (isScannerStopping) return;
     isScannerStopping = true;
@@ -678,21 +692,44 @@ function simulateEventScan() {
         showToast('❌ No event selected.');
         return;
     }
+
+    const defaultId = APP_STATE.user.id || "2024-00123";
     const defaultName = APP_STATE.user.name || "Juan Dela Cruz";
-    const studentId = APP_STATE.user.id || "2024-00123";
-    const demoName = prompt(
-        `📸 Simulating scan for: "${currentEventName}"\n\nEnter student name:`,
-        defaultName
+
+    const studentIdInput = prompt(
+        `📸 Simulating scan for: "${currentEventName}"\n\nEnter Student ID:`,
+        defaultId
     );
-    if (demoName === null) {
+    if (studentIdInput === null) {
         showToast('Scan cancelled');
         return;
     }
-    if (demoName.trim() === '') {
-        showToast('Please enter a student name');
+    const studentId = studentIdInput.trim();
+    if (studentId === '') {
+        showToast('Student ID cannot be empty');
         return;
     }
-    recordAttendanceForEvent(studentId, demoName.trim(), currentEventName, currentEventLocation || "Unknown Location");
+
+    const studentNameInput = prompt(
+        `Enter Student Name for ID: ${studentId}`,
+        defaultName
+    );
+    if (studentNameInput === null) {
+        showToast('Scan cancelled');
+        return;
+    }
+    const studentName = studentNameInput.trim();
+    if (studentName === '') {
+        showToast('Student name cannot be empty');
+        return;
+    }
+
+    recordAttendanceForEvent(
+        studentId,
+        studentName,
+        currentEventName,
+        currentEventLocation || "Unknown Location"
+    );
 }
 
 /* ================================================================
@@ -783,7 +820,6 @@ function startEventScanner() {
         showToast('No event selected.');
         return;
     }
-    // Update scanner title
     document.getElementById('scanner-title').textContent = 'Scan Student QR';
     switchView('view-scanner');
 

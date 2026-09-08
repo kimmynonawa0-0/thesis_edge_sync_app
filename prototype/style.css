@@ -756,3 +756,38 @@ h4 {
     font-size: 0.85rem;
     color: var(--text-muted);
 }
+
+/* ===== SCANNED CONFIRMATION MODAL ===== */
+#scanned-modal .modal-content {
+    background: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+#scanned-modal .modal-content h3 {
+    color: var(--primary);
+}
+#scanned-modal .modal-content p {
+    font-size: 1rem;
+    margin: 4px 0;
+}
+#scanned-modal .modal-content strong {
+    color: var(--text);
+    font-weight: 700;
+}
+/* ===== SCANNED CONFIRMATION MODAL ===== */
+#scanned-modal .modal-content {
+    background: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+#scanned-modal .modal-content h3 {
+    color: var(--primary);
+}
+#scanned-modal .modal-content p {
+    font-size: 1rem;
+    margin: 4px 0;
+}
+#scanned-modal .modal-content strong {
+    color: var(--text);
+    font-weight: 700;
+}
