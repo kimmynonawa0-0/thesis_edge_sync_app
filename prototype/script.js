@@ -772,7 +772,14 @@ function simulateEventScan() {
    SYNC
 ================================================================ */
 function syncData() {
-    showToast("Syncing with central database...");
+    const unsyncedCount = APP_STATE.records.filter(r => !r.synced).length;
+
+    if (unsyncedCount === 0) {
+        showToast("✅ Already up to date");
+        return;
+    }
+
+    showToast(`Syncing ${unsyncedCount} record${unsyncedCount > 1 ? 's' : ''}...`);
     setTimeout(() => {
         APP_STATE.records.forEach(r => r.synced = true);
         saveLocalRecords();
@@ -781,7 +788,6 @@ function syncData() {
         showToast("✅ Sync Successful!");
     }, 1200);
 }
-
 /* ================================================================
    ADMIN: EVENT MANAGEMENT
 ================================================================ */
