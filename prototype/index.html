@@ -132,12 +132,25 @@
                 </div>
 
                 <!-- Active Event -->
-                <div class="card active-session-card">
-                    <div class="badge-tag">CURRENT EVENT</div>
-                    <h3 id="dash-event-name">General Assembly 2024</h3>
-                    <p><i class="fa-solid fa-location-dot"></i> <span id="dash-event-loc">Main Hall</span></p>
-                    <p><i class="fa-regular fa-clock"></i> <span id="dash-event-time">Today • 10:00 AM</span></p>
-                </div>
+                <!-- NEW -->
+<div class="card active-session-card" id="student-current-event-card">
+    <div class="badge-tag" id="current-event-badge">CURRENT EVENT</div>
+
+    <!-- Event content (shown when an event exists) -->
+    <div id="current-event-content">
+        <h3 id="dash-event-name">—</h3>
+        <p><i class="fa-solid fa-location-dot"></i> <span id="dash-event-loc">—</span></p>
+        <p><i class="fa-regular fa-clock"></i> <span id="dash-event-time">—</span></p>
+    </div>
+
+    <!-- Empty state (shown when no events exist) -->
+    <div id="current-event-empty" class="hidden" style="text-align:center; padding:12px 0;">
+        <p class="subtext" style="margin-bottom:12px;">No current event to show</p>
+        <button class="btn btn-secondary" onclick="reloadEvents()" style="width:auto; display:inline-block;">
+            <i class="fa-solid fa-rotate"></i> Reload Events
+        </button>
+    </div>
+</div>
             </section>
 
             <!-- ===== VIEW: SCANNER ===== -->

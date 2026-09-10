@@ -214,6 +214,7 @@ function handleStudentLogin(e) {
     renderRecords();
     renderAdminRecent();
     renderTodayEvents();
+    renderCurrentEventCard();
     switchView('view-student-dash');
     showToast(`Welcome, ${user.name}!`);
 }
@@ -506,6 +507,61 @@ function renderTodayEvents() {
         `;
         container.appendChild(div);
     });
+}
+/* ================================================================
+   STUDENT: CURRENT EVENT CARD
+================================================================ */
+function renderCurrentEventCard() {
+    const contentEl = document.getElementById('current-event-content');
+    const emptyEl   = document.getElementById('current-event-empty');
+    const badgeEl   = document.getElementById('current-event-badge');
+    if (!contentEl || !emptyEl) return;
+
+    const events = JSON.parse(localStorage.getItem('events') || '[]');
+
+    // No events → show empty state with Reload button
+    if (events.length === 0) {
+        contentEl.classList.add('hidden');
+        emptyEl.classList.remove('hidden');
+        if (badgeEl) badgeEl.style.display = 'none';
+        return;
+    }
+
+    // Prefer today's event, otherwise the most recently created one
+    const today = new Date().toISOString().slice(0, 10);
+    let currentEvent = events.find(e => e.date === today);
+    if (!currentEvent) {
+        currentEvent = events.reduce((a, b) => (a.id > b.id ? a : b));
+    }
+
+    // Show content, hide empty state
+    contentEl.classList.remove('hidden');
+    emptyEl.classList.add('hidden');
+    if (badgeEl) badgeEl.style.display = '';
+
+    document.getElementById('dash-event-name').innerText = currentEvent.name;
+    document.getElementById('dash-event-loc').innerText  = currentEvent.location;
+    document.getElementById('dash-event-time').innerText = `${currentEvent.date} • ${currentEvent.time}`;
+
+    // Keep APP_STATE in sync in case other code depends on it
+    APP_STATE.activeEvent = {
+        name: currentEvent.name,
+        location: currentEvent.location,
+        time: `${currentEvent.date} • ${currentEvent.time}`
+    };
+}
+
+function reloadEvents() {
+    showToast('🔄 Reloading events...');
+    setTimeout(() => {
+        renderCurrentEventCard();
+        const events = JSON.parse(localStorage.getItem('events') || '[]');
+        if (events.length === 0) {
+            showToast('No events available yet');
+        } else {
+            showToast('✅ Events loaded');
+        }
+    }, 500);
 }
 
 /* ================================================================
