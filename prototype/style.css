@@ -791,3 +791,25 @@ h4 {
     color: var(--text);
     font-weight: 700;
 }
+/* ===== DANGER BUTTON ===== */
+.btn-danger {
+    background-color: var(--danger);
+    color: #fff;
+}
+.btn-danger:hover {
+    background-color: #dc2626;
+}
+.btn-icon-danger {
+    background-color: var(--danger);
+    color: #fff;
+    border: none;
+    padding: 10px 14px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.2s;
+    flex-shrink: 0;
+}
+.btn-icon-danger:hover {
+    background-color: #dc2626;
+}

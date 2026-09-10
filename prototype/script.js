@@ -427,19 +427,58 @@ function renderAdminEvents() {
         card.className = 'record-card';
         card.style.marginBottom = '10px';
         card.innerHTML = `
-            <div>
+            <div style="flex: 1; min-width: 0;">
                 <strong>${event.name}</strong>
                 <div class="subtext">${event.location} • ${event.date} • ${event.time}</div>
                 <div class="subtext" style="font-size:0.75rem; color:var(--purple);">
                     ${event.attendees ? event.attendees.length : 0} students checked in
                 </div>
             </div>
-            <button class="btn btn-small btn-purple" onclick="openEventDetail(${event.id})">
-                <i class="fa-solid fa-qrcode"></i> Manage
-            </button>
+            <div style="display:flex; gap:6px; flex-shrink: 0;">
+                <button class="btn btn-small btn-purple" onclick="openEventDetail(${event.id})">
+                    <i class="fa-solid fa-qrcode"></i> Manage
+                </button>
+                <button class="btn-icon-danger" onclick="deleteEvent(${event.id})" title="Delete Event">
+                    <i class="fa-solid fa-trash"></i>
+                </button>
+            </div>
         `;
         list.appendChild(card);
     });
+}
+function deleteEvent(eventId) {
+    const events = JSON.parse(localStorage.getItem('events') || '[]');
+    const event = events.find(e => e.id === eventId);
+    if (!event) {
+        showToast('Event not found');
+        return;
+    }
+
+    showConfirmDialog(
+        `Delete "${event.name}"? This cannot be undone.`,
+        () => {
+            // Remove the event from localStorage
+            const updatedEvents = events.filter(e => e.id !== eventId);
+            localStorage.setItem('events', JSON.stringify(updatedEvents));
+
+            // If the deleted event was the currently-managed one, clear it
+            if (currentEventId === eventId) {
+                currentEventId = null;
+                currentEventName = null;
+                currentEventLocation = null;
+            }
+
+            // Re-render everything
+            renderAdminEvents();
+            renderTodayEvents();
+            renderHistoryEvents();
+
+            showToast(`✅ Event "${event.name}" deleted`);
+        },
+        () => {
+            showToast('Delete cancelled');
+        }
+    );
 }
 
 /* ================================================================
