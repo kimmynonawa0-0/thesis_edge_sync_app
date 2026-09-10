@@ -588,7 +588,7 @@ h4 {
     gap: 4px;
     font-size: 0.8rem;
     cursor: pointer;
-    width: 25%;
+    flex: 1;
 }
 .nav-item i {
     font-size: 1.25rem;

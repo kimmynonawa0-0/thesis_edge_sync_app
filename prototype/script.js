@@ -300,18 +300,15 @@ function renderNav() {
             </button>
         `;
     } else if (role === 'admin') {
-        html = `
-            <button class="nav-item active" onclick="switchView('view-admin-dash'); setActiveNav(this)">
-                <i class="fa-solid fa-gauge-high"></i><span>Dashboard</span>
-            </button>
-            <button class="nav-item" onclick="syncData()">
-                <i class="fa-solid fa-cloud-upload-alt"></i><span>Sync</span>
-            </button>
-            <button class="nav-item" onclick="logout()">
-                <i class="fa-solid fa-right-from-bracket"></i><span>Logout</span>
-            </button>
-        `;
-    }
+    html = `
+        <button class="nav-item active" onclick="switchView('view-admin-dash'); setActiveNav(this)">
+            <i class="fa-solid fa-gauge-high"></i><span>Dashboard</span>
+        </button>
+        <button class="nav-item" onclick="logout()">
+            <i class="fa-solid fa-right-from-bracket"></i><span>Logout</span>
+        </button>
+    `;
+}
     nav.innerHTML = html;
     nav.style.display = APP_STATE.isLoggedIn ? 'flex' : 'none';
 }
